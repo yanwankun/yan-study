@@ -17,4 +17,5 @@ public interface CourseStudentMapper {
     int updateByPrimaryKeyWithBLOBs(CourseStudent record);
 
     int updateByPrimaryKey(CourseStudent record);
+
 }
