@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  error:
+      path: /custom/error
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password: yanredistest
+    port: 6379
+    timeout: 1000
+    enableTransactionSupport: false
+    testOnBorrow: true
+    blockWhenExhausted: false
+    pool:
+      max-active: 8
+      max-idle: 3
+      max-wait: 1000
+      min-idle: 1
