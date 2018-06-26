@@ -1,0 +1,37 @@
+[{
+  "index":"index1",
+  "type":"initType",
+  "number_of_shards":3,
+  "number_of_replicas":2,
+  "fieldType":{
+    "initType":{
+      "properties":{
+        "name":{
+          "type":"String"
+        },
+        "date":{
+          "type":"date",
+          "format": "yyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+        }
+      }
+    }
+  }
+},{
+  "index":"index2",
+  "type":"initType",
+  "number_of_shards":3,
+  "number_of_replicas":2,
+  "fieldType":{
+    "initType":{
+      "properties":{
+        "ip":{
+          "type":"ip"
+        },
+        "date":{
+          "type":"date",
+          "format": "yyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+        }
+      }
+    }
+  }
+}]
