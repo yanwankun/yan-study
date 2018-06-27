@@ -1,5 +1,8 @@
 package cn.yan.study.utils.cache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time  20:32
  */
 public class ConcurrentHashMapCacheUtils {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ConcurrentHashMapCacheUtils.class);
 
     /**
      * 缓存最大个数
@@ -27,6 +32,11 @@ public class ConcurrentHashMapCacheUtils {
      * 这个记录了缓存使用的最后一次的记录，最近使用的在最前面
      */
     private static final List<String> CACHE_USE_LOG_LIST = new LinkedList<>();
+    /**
+     * 清理过期缓存是否在运行
+     */
+    private static Boolean CLEAN_THREAD_IS_RUN = false;
+
 
     /**
      * 设置缓存
@@ -48,6 +58,7 @@ public class ConcurrentHashMapCacheUtils {
         }
         CacheObj cacheObj = new CacheObj(cacheValue, ttlTime);
         CACHE_OBJECT_MAP.put(cacheKey, cacheObj);
+        LOGGER.info("have set key :" + cacheKey);
     }
 
     /**
@@ -61,6 +72,7 @@ public class ConcurrentHashMapCacheUtils {
      * 获取缓存
      */
     public static Object getCache(String cacheKey) {
+        startCleanThread();
         if (checkCache(cacheKey)) {
             saveCacheUseLog(cacheKey);
             return CACHE_OBJECT_MAP.get(cacheKey).getCacheValue();
@@ -76,6 +88,7 @@ public class ConcurrentHashMapCacheUtils {
      * 删除所有缓存
      */
     public static void clear() {
+        LOGGER.info("have clean all key !");
         CACHE_OBJECT_MAP.clear();
         CURRENT_SIZE = 0;
     }
@@ -86,6 +99,7 @@ public class ConcurrentHashMapCacheUtils {
     public static void deleteCache(String cacheKey) {
         Object cacheValue = CACHE_OBJECT_MAP.remove(cacheKey);
         if (cacheValue != null) {
+            LOGGER.info("have delete key :" + cacheKey);
             CURRENT_SIZE = CURRENT_SIZE - 1;
         }
     }
@@ -109,6 +123,7 @@ public class ConcurrentHashMapCacheUtils {
      * 删除最近最久未使用的缓存
      */
     private static void deleteLRU() {
+        LOGGER.info("delete Least recently used run!");
         String cacheKey = CACHE_USE_LOG_LIST.remove(CACHE_USE_LOG_LIST.size() - 1);
         deleteCache(cacheKey);
     }
@@ -116,7 +131,8 @@ public class ConcurrentHashMapCacheUtils {
     /**
      * 删除过期的缓存
      */
-    private static void deleteTimeOut() {
+    static void deleteTimeOut() {
+        LOGGER.info("delete time out run!");
         List<String> deleteKeyList = new LinkedList<>();
         for(Map.Entry<String, CacheObj> entry : CACHE_OBJECT_MAP.entrySet()) {
             if (entry.getValue().getTtlTime() < System.currentTimeMillis() && entry.getValue().getTtlTime() != -1L) {
@@ -127,6 +143,7 @@ public class ConcurrentHashMapCacheUtils {
         for (String deleteKey : deleteKeyList) {
             deleteCache(deleteKey);
         }
+        LOGGER.info("delete cache count is :" + deleteKeyList.size());
 
     }
 
@@ -153,7 +170,24 @@ public class ConcurrentHashMapCacheUtils {
         CACHE_USE_LOG_LIST.add(0,cacheKey);
     }
 
+    /**
+     * 设置清理线程的运行状态为正在运行
+     */
+    static void setCleanThreadRun() {
+        CLEAN_THREAD_IS_RUN = true;
+    }
+
+    /**
+     * 开启清理过期缓存的线程
+     */
+    private static void startCleanThread() {
+        if (!CLEAN_THREAD_IS_RUN) {
+            new Thread(new CleanTimeOutThread()).run();
+        }
+    }
+
     public static void showUtilsInfo() {
+        System.out.println("clean time out cache is run :" + CLEAN_THREAD_IS_RUN);
         System.out.println("cache max count is :" + CACHE_MAX_NUMBER);
         System.out.println("cache current count is :" + CURRENT_SIZE);
         System.out.println("cache object map is :" + CACHE_OBJECT_MAP.toString());
@@ -162,11 +196,26 @@ public class ConcurrentHashMapCacheUtils {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 1000; i++) {
-            ConcurrentHashMapCacheUtils.setCache("my_cache_key_" + i, new Integer(i));
+        for (int i = 0; i < 100; i++) {
+            try {
+                Thread.sleep(2 * 1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ConcurrentHashMapCacheUtils.setCache("my_cache_key_" + i, i, 60*1000);
         }
 
-        ConcurrentHashMapCacheUtils.showUtilsInfo();
+        for (int i = 0; i < 100; i++) {
+            if (i > 10) {
+                ConcurrentHashMapCacheUtils.getCache("test");
+            }
+            try {
+                Thread.sleep(2 * 1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            ConcurrentHashMapCacheUtils.showUtilsInfo();
+        }
     }
 
 
@@ -202,5 +251,25 @@ class CacheObj {
                 "CacheValue=" + CacheValue +
                 ", ttlTime=" + ttlTime +
                 '}';
+    }
+}
+
+/**
+ * 每一分钟清理一次过期缓存
+ */
+class CleanTimeOutThread implements Runnable{
+
+    @Override
+    public void run() {
+        ConcurrentHashMapCacheUtils.setCleanThreadRun();
+        while (true) {
+            System.out.println("clean thread run ");
+            ConcurrentHashMapCacheUtils.deleteTimeOut();
+            try {
+                Thread.sleep(10 * 1000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
