@@ -1,10 +1,7 @@
 package cn.yan.study.es.utils;
 
 import cn.yan.study.es.client.EsClient;
-import net.minidev.json.JSONObject;
-import org.apache.logging.log4j.core.Logger;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.client.IndicesAdminClient;
@@ -34,38 +31,63 @@ public class EsAdminClientUtils {
         Settings settings = Settings.builder().put("index.number_of_shards", shardNumber).put("index.number_of_replicas", replicaNumber).build();
         CreateIndexRequestBuilder cib = adminClient.prepareCreate(indexName).setSettings(settings);
 
-
+//        { 姓名，出生日期，身高，学校，公司,居住地址}
         XContentBuilder mapping = XContentFactory.jsonBuilder()
                 .startObject()
 
-//        JSONObject  idJson = new JSONObject();
-//        idJson.put("type", "string");
-//        idJson.put("store", "true");
-//        propertiesJson.put("id", idJson);
-//
-//        JSONObject nameJson = new JSONObject();
-//        nameJson.put("type", "string");
-//        propertiesJson.put("name", nameJson);
-//
-//        mappingTypeJson.put("properties", propertiesJson);
-
                 .startObject("properties") //设置之定义字段
 
-                .startObject("ip")
-                .field("type","ip") //设置数据类型
+                // 姓名
+                .startObject("name")
+                .field("type","keyword") //设置数据类型
                 .endObject()
 
-                .startObject("id")
-                .field("type","text")
-                .field("store", true)
-                .endObject()
-
-//                .startObject("name")
-//                .field("type", "text")
-//
-                .startObject("inputtime")
+                // 出生日期
+                .startObject("birthday")
                 .field("type","date")  //设置Date类型
                 .field("format","yyyy-MM-dd HH:mm:ss") //设置Date的格式
+                .endObject()
+
+                // 身高
+                .startObject("height")
+                .field("type", Integer.class)
+                .endObject()
+
+                // 学校
+                .startArray("school")
+                .startObject("school_name")
+                .field("type", "keyword")
+                .endObject()
+                .startObject("start_year")
+                .field("type", Integer.class)
+                .endObject()
+                .startObject("end_year")
+                .field("type", Integer.class)
+                .endObject()
+                .startObject("school_address")
+                .field("type", "text")
+                .endObject()
+                .endArray()
+
+                // 公司
+                .startArray("company")
+                .startObject("company_name")
+                .field("type", "keyword")
+                .endObject()
+                .startObject("start_year")
+                .field("type", Integer.class)
+                .endObject()
+                .startObject("end_year")
+                .field("type", Integer.class)
+                .endObject()
+                .startObject("company_address")
+                .field("type", "text")
+                .endObject()
+                .endArray()
+//
+                // 居住地址
+                .startObject("address")
+                .field("type","text")
                 .endObject()
 
                 .endObject()

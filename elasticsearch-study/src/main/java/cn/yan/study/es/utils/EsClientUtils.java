@@ -14,6 +14,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryAction;
@@ -21,6 +22,7 @@ import org.elasticsearch.index.reindex.ReindexAction;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
@@ -40,26 +42,25 @@ public class EsClientUtils {
      * @param indexName 索引名称
      * @param indexType 索引类型
      * @param docId 文档id
-     * @throws IOException
+     * @param parent 父子关系中的父节点
+     * @param objMap 字段信息
      */
-    public static void addDocument(String indexName, String indexType, String docId) throws IOException {
+    public static void addDocument(String indexName, String indexType, String docId, String parent, Map<String, Object> objMap) {
+        try {
+            XContentBuilder xContentBuilder = jsonBuilder()
+                    .startObject();
+            for (Map.Entry<String, Object> entry : objMap.entrySet()) {
+                xContentBuilder.field(entry.getKey(), entry.getValue());
+            }
+            xContentBuilder = xContentBuilder.endObject();
+            IndexResponse response = client.prepareIndex(indexName, indexType, docId).setParent(parent)
+                    .setSource(xContentBuilder)
+                    .get();
 
-        /**
-         * 索引名称 twitter
-         * type tweet
-         * id 1
-         */
-        IndexResponse response = client.prepareIndex("twitter", "tweet", "1")
-                .setSource(jsonBuilder()
-                        .startObject()
-                        .field("user", "kimchy")
-                        .field("postDate", new Date())
-                        .field("message", "trying out Elasticsearch")
-                        .endObject()
-                )
-                .get();
-
-        System.out.println(response.toString());
+            System.out.println(response.toString());
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
     }
 
     /**

@@ -1,0 +1,45 @@
+创建父索引
+localhost:9200/yan_index_student?pretty
+{
+  "mappings": {
+    "student":{
+    	"properties":{
+    		"stu_name":{
+    			"type":"keyword"
+    		},
+    		"stu_birthday":{
+    			"type":"date",
+    			"format":"yyyy-MM-dd"
+    		}
+    	}
+    }
+  }
+}
+
+创建子索引
+localhost:9200/yan_index_student_school?pretty
+{
+	"mappings":{
+		"stu_school":{
+			"_parent":{
+				"type":"student"
+			},
+			"properties":{
+				"school_name": {
+					"type":"keyword"
+				},
+				"start_year": {
+					"type":"date",
+					"format":"yyyy-MM-dd"
+				},
+				"end_year": {
+					"type":"date",
+					"format":"yyyy-MM-dd"
+				},
+				"school_address" : {
+					"type":"text"
+				}
+			}
+		}
+	}
+}
