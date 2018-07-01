@@ -116,6 +116,9 @@ public class ConcurrentHashMapCacheUtils {
         if (cacheObj == null) {
             return false;
         }
+        if (cacheObj.getTtlTime() == -1L) {
+            return true;
+        }
         if (cacheObj.getTtlTime() < System.currentTimeMillis()) {
             deleteCache(cacheKey);
             return false;
