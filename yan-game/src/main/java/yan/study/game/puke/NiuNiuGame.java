@@ -8,45 +8,7 @@ import java.util.*;
 public class NiuNiuGame {
 
     /**
-     * 牛牛玩法
-     * @param pukes
-     * @param count
-     */
-    public static void niuniu(List<Card> pukes, int count) {
-        List<List<Card>> personCards = new ArrayList<List<Card>>(count);
-
-        for (int cardCount = 0; cardCount < 5; cardCount ++) {
-            personCards.add(new ArrayList<Card>());
-        }
-
-        for (int cardCount = 0; cardCount < 5; cardCount ++) {
-            for (int index = 0; index < 5; index ++) {
-                List<Card> cardList = personCards.get(index);
-                cardList.add(pukes.get(0));
-                pukes.remove(0);
-            }
-        }
-
-        int index = 0;
-        for (List<Card> personCard : personCards) {
-            String personName;
-            if (index < PokerUtils.persons.size()) {
-                personName = PokerUtils.persons.get(index);
-                index++;
-            } else {
-                personName = "person" + index;
-            }
-            System.out.println(personName + " card is :");
-            for (Card card : personCard) {
-                System.out.println(card);
-            }
-        }
-    }
-
-    /**
      * 获取一手牌的牛
-     * @param personCards
-     * @return
      */
     public static NiuResult getNiuResult(List<Card> personCards) {
         /**
@@ -96,8 +58,6 @@ public class NiuNiuGame {
 
     /**
      * 获取牛的数字
-     * @param lessThanTen
-     * @return
      */
     private static int getNiuNumber(List<Card> lessThanTen) {
         if (lessThanTen.size() == 0) {
@@ -124,8 +84,6 @@ public class NiuNiuGame {
 
     /**
      * 从两张牌里面找牛
-     * @param lessThanTen
-     * @return
      */
     private static int getNiuFrom2(List<Card> lessThanTen) {
         if (lessThanTen.size() == 2) {
@@ -142,8 +100,6 @@ public class NiuNiuGame {
 
     /**
      * 从三张里面找牛
-     * @param lessThanTen
-     * @return
      */
     private static int getNiuFrom3(List<Card> lessThanTen) {
         if (lessThanTen.size() == 3) {
@@ -172,8 +128,6 @@ public class NiuNiuGame {
 
     /**
      * 从4账牌里面找牛  3 + 1 2 + 2
-     * @param lessThanTen
-     * @return
      */
     private static int getNiuFrom4(List<Card> lessThanTen) {
         if (lessThanTen.size() == 4) {
@@ -205,8 +159,6 @@ public class NiuNiuGame {
 
     /**
      * 从五张里面找牛 3+2 2+2+1
-     * @param lessThanTen
-     * @return
      */
     private static int getNiuFrom5(List<Card> lessThanTen) {
         if (lessThanTen.size() == 5) {
@@ -241,8 +193,6 @@ public class NiuNiuGame {
 
     /**
      * 取一张的值
-     * @param card
-     * @return
      */
     private static int getOneCardNum(Card card) {
         if (card.getValue().equals(Card.POKER_VALUE_LIST.get(0))) {
@@ -253,9 +203,6 @@ public class NiuNiuGame {
 
     /**
      * 创建游戏
-     * @param count
-     * @param names
-     * @return
      */
     public static String createGame(int count, List<String> names) {
 
@@ -275,6 +222,9 @@ public class NiuNiuGame {
     }
 
 
+    /**
+     * 一次发完所有的牌
+     */
     public static void sendCard(String gameUUid) {
         List<Card> pokers = PokerUtils.getNewPokers();
         pokers = PokerUtils.deleteCard(Arrays.asList(new Card(Card.POKER_COLOR_LIST.get(1), Card.MAX_KING), new Card(Card.POKER_COLOR_LIST.get(0), Card.SMALL_KING)), pokers);
@@ -293,6 +243,7 @@ public class NiuNiuGame {
 
     public static void showResult(String gameUUid) {
         List<Person> gamePersonList = (List<Person>) ConcurrentHashMapCacheUtils.getCache(gameUUid);
+        // TODO 排序失败 以后有时间再玩
 //        Collections.sort(gamePersonList, new Comparator<Person>() {
 //            public int compare(Person o1, Person o2) {
 //                List<Card> personOneCards = o1.getCardList();

@@ -7,6 +7,7 @@ package cn.yan.study.utils;
  * Time  19:28
  */
 public class YanStrUtils {
+
     public static boolean isEmpty(String str) {
         if(str != null && str.length() != 0) {
             for(int i = 0; i < str.length(); ++i) {
@@ -31,7 +32,7 @@ public class YanStrUtils {
     }
 
     // todo
-    private static String getRandomCode(int i) {
-        return null;
+    private static String getRandomCode(int length) {
+        return "yan";
     }
 }
