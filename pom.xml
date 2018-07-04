@@ -13,6 +13,7 @@
         <module>elasticsearch-study</module>
         <module>queue-study</module>
         <module>yan-utils</module>
+        <module>yan-game/yan-game</module>
     </modules>
 
 

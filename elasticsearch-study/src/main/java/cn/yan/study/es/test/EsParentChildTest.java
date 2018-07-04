@@ -1,32 +1,14 @@
 package cn.yan.study.es.test;
 
 import cn.yan.study.es.client.EsClient;
-import cn.yan.study.es.utils.EsAdminClientUtils;
 import cn.yan.study.es.utils.EsClientUtils;
-import cn.yan.study.utils.ObjectUtils;
-import cn.yan.study.utils.YanDateUtils;
-import jdk.nashorn.internal.runtime.JSONFunctions;
-import net.minidev.json.JSONObject;
-import org.apache.http.client.utils.DateUtils;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
+import cn.yan.study.utils.YanObjectUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentParser;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.join.query.HasParentQueryBuilder;
-import org.elasticsearch.join.query.ParentIdQueryBuilder;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
@@ -83,7 +65,7 @@ public class EsParentChildTest {
 
         for (Map.Entry<Student, List<School>> entry : studentSchoolListMap.entrySet()) {
             for (School school : entry.getValue()) {
-                EsClientUtils.addDocument("yan_index_student_school", "stu_school", school.getDocId(), entry.getKey().getDocId(), ObjectUtils.getObjMap(school));
+                EsClientUtils.addDocument("yan_index_student_school", "stu_school", school.getDocId(), entry.getKey().getDocId(), YanObjectUtils.getObjMap(school));
             }
         }
     }
