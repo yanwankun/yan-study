@@ -293,21 +293,21 @@ public class NiuNiuGame {
 
     public static void showResult(String gameUUid) {
         List<Person> gamePersonList = (List<Person>) ConcurrentHashMapCacheUtils.getCache(gameUUid);
-        Collections.sort(gamePersonList, new Comparator<Person>() {
-            public int compare(Person o1, Person o2) {
-                List<Card> personOneCards = o1.getCardList();
-                List<Card> personTwoCards = o2.getCardList();
+//        Collections.sort(gamePersonList, new Comparator<Person>() {
+//            public int compare(Person o1, Person o2) {
+//                List<Card> personOneCards = o1.getCardList();
+//                List<Card> personTwoCards = o2.getCardList();
+//
+//                NiuResult oneResult = getNiuResult(personOneCards);
+//                NiuResult twoResult = getNiuResult(personTwoCards);
+//
+//                return oneResult.compareTo(twoResult);
+//            }
+//        });
 
-                NiuResult oneResult = getNiuResult(personOneCards);
-                NiuResult twoResult = getNiuResult(personTwoCards);
-
-                return oneResult.compareTo(twoResult);
-            }
-        });
-
-        Person winPerson = gamePersonList.get(0);
-        System.out.println("this is winner ...");
-        showPerson(winPerson);
+//        Person winPerson = gamePersonList.get(0);
+//        System.out.println("this is winner ...");
+//        showPerson(winPerson);
 
 
         System.out.println("all person info is ....");
