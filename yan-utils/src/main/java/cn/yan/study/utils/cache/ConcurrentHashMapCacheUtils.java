@@ -41,10 +41,10 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static Boolean CLEAN_THREAD_IS_RUN = false;
 
-    /**
-     * 清理线程的
-     */
-    private static ExecutorService executor = Executors.newSingleThreadExecutor();
+//    /**
+//     * 清理线程的
+//     */
+//    private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 
     /**
@@ -194,8 +194,8 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static void startCleanThread() {
         if (!CLEAN_THREAD_IS_RUN) {
-//            new Thread(new CleanTimeOutThread()).run();
-            executor.submit(new CleanTimeOutThread());
+            new Thread(new CleanTimeOutThread()).start();
+//            executor.submit(new CleanTimeOutThread());
         }
     }
 
