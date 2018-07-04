@@ -41,7 +41,10 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static Boolean CLEAN_THREAD_IS_RUN = false;
 
-    static ExecutorService executor = Executors.newSingleThreadExecutor();
+    /**
+     * 清理线程的
+     */
+    private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 
     /**
@@ -79,10 +82,8 @@ public class ConcurrentHashMapCacheUtils {
      */
     public static Object getCache(String cacheKey) {
         startCleanThread();
-        System.out.println("111");
         if (checkCache(cacheKey)) {
             saveCacheUseLog(cacheKey);
-            System.out.println("ttttt");
             return CACHE_OBJECT_MAP.get(cacheKey).getCacheValue();
         }
         return null;

@@ -71,14 +71,14 @@ public class NiuNiuGame {
         Integer niuNumber = getNiuNumber(lessThanTen);
         result.setNiuNumber(niuNumber);
 
-        List<Card> sortCards = new LinkedList<Card>();
+        List<Card> sortCards = new ArrayList<Card>();
         Collections.sort(moreThanNine, Collections.<Card>reverseOrder());
         sortCards.addAll(moreThanNine);
 
         Collections.sort(lessThanTen, Collections.<Card>reverseOrder());
         List<Card> aList = new ArrayList<Card>(); // 记录A的牌
         for (Card card : lessThanTen) {
-            if (card.getValue().equals(Card.POKER_VALUE_LIST.indexOf(0))) {
+            if (card.getValue().equals(Card.POKER_VALUE_LIST.get(0))) {
                 aList.add(card);
             }
         }
@@ -159,7 +159,7 @@ public class NiuNiuGame {
                 niuNumber = getNiuFrom2(listCard);
                 if (niuNumber == 10) {
                     List<Card> subList = YanCollectionUtils.getSubList(lessThanTen, listCard);
-                    return getNiuFrom2(subList);
+                    return getOneCardNum(subList.get(0));
                 }
             }
 
@@ -281,8 +281,8 @@ public class NiuNiuGame {
         PokerUtils.Shuffle(pokers);
         List<Person> gamePersonList = (List<Person>) ConcurrentHashMapCacheUtils.getCache(gameUUid);
         int personCount = gamePersonList.size();
-        for (int cardCount = 0; cardCount < 5; cardCount ++) {
-            for (int index = 0; index < personCount; index ++) {
+        for (int cardCount = 0; cardCount < 5; cardCount++) {
+            for (int index = 0; index < personCount; index++) {
                 List<Card> cardList = gamePersonList.get(index).getCardList();
                 cardList.add(pokers.get(0));
                 pokers.remove(0);
@@ -311,7 +311,8 @@ public class NiuNiuGame {
 
 
         System.out.println("all person info is ....");
-        for (Person person : gamePersonList) {
+        for (int index =0; index < gamePersonList.size(); index++) {
+            Person person = gamePersonList.get(index);
             showPerson(person);
         }
     }
@@ -373,7 +374,7 @@ public class NiuNiuGame {
             NiuResult niuResult = (NiuResult)o;
 
             if (this.getNiuNumber() > niuResult.getNiuNumber()) {
-                return this.getNiuNumber() - niuResult.getNiuNumber();
+                return niuResult.getNiuNumber() - this.getNiuNumber();
             }
 
             return PokerUtils.commCompareTo(this.getCardSortList(), niuResult.getCardSortList());

@@ -2,6 +2,7 @@ package yan.study.game.puke;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Card implements Comparable {
 
@@ -40,6 +41,21 @@ public class Card implements Comparable {
                 "color='" + color + '\'' +
                 ", value='" + value + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card card = (Card) o;
+        return Objects.equals(getColor(), card.getColor()) &&
+                Objects.equals(getValue(), card.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getColor(), getValue());
     }
 
     /**
@@ -113,4 +129,6 @@ public class Card implements Comparable {
             return valueTwo - valueOne;
         }
     }
+
+
 }
