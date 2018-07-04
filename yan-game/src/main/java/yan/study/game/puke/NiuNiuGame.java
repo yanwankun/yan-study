@@ -8,6 +8,11 @@ import java.util.*;
 public class NiuNiuGame {
 
     /**
+     * 最大支持玩家数目, 因为单副牌只有那么多, 修改发牌实现支持更多的玩家数目
+     */
+    private static final Integer MAX_PLAYER_COUNT = 10; // 50 / 5 = 10
+
+    /**
      * 获取一手牌的牛
      */
     public static NiuResult getNiuResult(List<Card> personCards) {
@@ -210,6 +215,10 @@ public class NiuNiuGame {
             throw new RuntimeException("params is error");
         }
 
+        if (count > MAX_PLAYER_COUNT) {
+            throw new RuntimeException("player count is more than " + MAX_PLAYER_COUNT );
+        }
+
         String gameUUid = YanStrUtils.getYanString("niuniuGame");
         List<Person> gamePersonList = new ArrayList<Person>();
         for (int i = 0; i< count; i++) {
@@ -243,7 +252,7 @@ public class NiuNiuGame {
 
     public static void showResult(String gameUUid) {
         List<Person> gamePersonList = (List<Person>) ConcurrentHashMapCacheUtils.getCache(gameUUid);
-        // TODO 排序失败 以后有时间再玩
+
         Collections.sort(gamePersonList, new Comparator<Person>() {
             public int compare(Person o1, Person o2) {
                 List<Card> personOneCards = o1.getCardList();
