@@ -25,6 +25,10 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static Integer CURRENT_SIZE = 0;
     /**
+     * 时间一分钟
+     */
+    static Long ONE_MINUTE = 1 * 60 * 1000L;
+    /**
      * 缓存对象
      */
     private static final Map<String, CacheObj> CACHE_OBJECT_MAP = new ConcurrentHashMap<>();
@@ -115,6 +119,9 @@ public class ConcurrentHashMapCacheUtils {
         CacheObj cacheObj = CACHE_OBJECT_MAP.get(cacheKey);
         if (cacheObj == null) {
             return false;
+        }
+        if (cacheObj.getTtlTime() == -1L) {
+            return true;
         }
         if (cacheObj.getTtlTime() < System.currentTimeMillis()) {
             deleteCache(cacheKey);
@@ -273,7 +280,7 @@ class CleanTimeOutThread implements Runnable{
             System.out.println("clean thread run ");
             ConcurrentHashMapCacheUtils.deleteTimeOut();
             try {
-                Thread.sleep(10 * 1000L);
+                Thread.sleep(ConcurrentHashMapCacheUtils.ONE_MINUTE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
