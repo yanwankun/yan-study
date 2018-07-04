@@ -154,7 +154,7 @@ public class ConfigPropertiesGetUtils {
             throw new RuntimeException("未处理情况请处理");
         }
         String paramKey = params[keyIndex];
-        if (ObjectUtils.isEmpty(paramKey)) {
+        if (YanObjectUtils.isEmpty(paramKey)) {
             System.out.println(content);
             throw new RuntimeException("未处理情况请处理");
         }
@@ -167,7 +167,7 @@ public class ConfigPropertiesGetUtils {
      * 从数组中找到参数名称的下标
      */
     private static Integer getKeyIndex(String[] params) {
-        if (ObjectUtils.isEmpty(params)) {
+        if (YanObjectUtils.isEmpty(params)) {
             return -1;
         }
         for (Integer index = 0; index < params.length; index++ ) {
@@ -185,7 +185,7 @@ public class ConfigPropertiesGetUtils {
      */
     private static void myPut(String key, Object value, Map<String, Object> maps) {
         Object existValue = maps.get(key);
-        if (ObjectUtils.isEmpty(existValue)) {
+        if (YanObjectUtils.isEmpty(existValue)) {
             maps.put(key, value);
             return;
         }

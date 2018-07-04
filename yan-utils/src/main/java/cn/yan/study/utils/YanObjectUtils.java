@@ -12,9 +12,9 @@ import java.util.Map;
  * Date  2018/6/25
  * Time  19:27
  */
-public class ObjectUtils {
+public class YanObjectUtils {
     public static boolean isEmpty(Object object) {
-        return object == null || (object instanceof String ? StrUtils.isEmpty((String) object) : (object instanceof CharSequence ? ((CharSequence) object).length() == 0 : (object instanceof Collection ? ((Collection) object).isEmpty() : (object instanceof Map ? ((Map) object).isEmpty() : (object.getClass().isArray() && Array.getLength(object) == 0)))));
+        return object == null || (object instanceof String ? YanStrUtils.isEmpty((String) object) : (object instanceof CharSequence ? ((CharSequence) object).length() == 0 : (object instanceof Collection ? ((Collection) object).isEmpty() : (object instanceof Map ? ((Map) object).isEmpty() : (object.getClass().isArray() && Array.getLength(object) == 0)))));
     }
 
     public static Map<String, Object> getObjMap(Object obj) {

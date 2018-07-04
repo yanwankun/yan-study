@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 /**
  * Created
@@ -36,6 +36,8 @@ public class ConcurrentHashMapCacheUtils {
      * 清理过期缓存是否在运行
      */
     private static Boolean CLEAN_THREAD_IS_RUN = false;
+
+    static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 
     /**
@@ -73,8 +75,10 @@ public class ConcurrentHashMapCacheUtils {
      */
     public static Object getCache(String cacheKey) {
         startCleanThread();
+        System.out.println("111");
         if (checkCache(cacheKey)) {
             saveCacheUseLog(cacheKey);
+            System.out.println("ttttt");
             return CACHE_OBJECT_MAP.get(cacheKey).getCacheValue();
         }
         return null;
@@ -182,7 +186,8 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static void startCleanThread() {
         if (!CLEAN_THREAD_IS_RUN) {
-            new Thread(new CleanTimeOutThread()).run();
+//            new Thread(new CleanTimeOutThread()).run();
+            executor.submit(new CleanTimeOutThread());
         }
     }
 
@@ -196,6 +201,7 @@ public class ConcurrentHashMapCacheUtils {
     }
 
     public static void main(String[] args) {
+
         for (int i = 0; i < 100; i++) {
             try {
                 Thread.sleep(2 * 1000L);
@@ -216,6 +222,7 @@ public class ConcurrentHashMapCacheUtils {
             }
             ConcurrentHashMapCacheUtils.showUtilsInfo();
         }
+
     }
 
 
