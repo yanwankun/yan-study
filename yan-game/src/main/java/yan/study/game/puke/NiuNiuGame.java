@@ -25,10 +25,9 @@ public class NiuNiuGame {
         NiuResult result = new NiuResult();
         List<Card> moreThanNine = new ArrayList<Card>();
         List<Card> lessThanTen = new ArrayList<Card>();
-        Card heitao9 = new Card(Card.POKER_COLOR_LIST.get(0), Card.POKER_VALUE_LIST.get(5));
-        Card fanpianA = new Card(Card.POKER_COLOR_LIST.get(3), Card.POKER_VALUE_LIST.get(0));
+
         for (Card card : personCards) {
-            if (card.compareTo(heitao9) > 0 && card.compareTo(fanpianA) < 0) {
+            if (card.compareTo(PokerUtils.CARD_HEI_TAO_9) > 0 && card.compareTo(PokerUtils.CARD_FAN_PIAN_A) < 0) {
                 moreThanNine.add(card);
             } else {
                 lessThanTen.add(card);
@@ -291,7 +290,7 @@ public class NiuNiuGame {
 
     public static void main(String[] args) {
 
-        String gameUUid = createGame(4, Arrays.asList("yan", "test", "root", "system"));
+        String gameUUid = createGame(3, Arrays.asList("qibin", "yan", "zhang"));
         sendCard(gameUUid);
         showResult(gameUUid);
     }

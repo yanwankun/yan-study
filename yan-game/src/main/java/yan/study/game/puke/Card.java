@@ -94,6 +94,9 @@ public class Card implements Comparable {
             }
             return 1;
         } else {
+            if (card.isKing()) {
+                return -1;
+            }
             return compareToNoKing(this, card);
         }
 
