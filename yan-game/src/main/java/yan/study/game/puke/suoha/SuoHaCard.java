@@ -10,7 +10,7 @@ import java.util.List;
  * Date  2018/7/6
  * Time  14:31
  */
-public class SuoHaCard {
+public class SuoHaCard{
     /**
      * 牌的张数
      */
@@ -20,7 +20,7 @@ public class SuoHaCard {
      */
     private Card hideCard;
     /**
-     * 公开牌
+     * 自己的所有牌
      */
     private List<Card> cardList;
     /**

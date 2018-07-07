@@ -5,9 +5,7 @@ import cn.yan.study.utils.YanStrUtils;
 import cn.yan.study.utils.cache.ConcurrentHashMapCacheUtils;
 import yan.study.game.puke.Card;
 import yan.study.game.puke.PokerUtils;
-import yan.study.game.puke.YanCollectionUtils;
 import yan.study.game.puke.suoha.enums.SuoHaCardTypeEnum;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +17,11 @@ import java.util.List;
  * Time  17:31
  */
 public class SuoHaGameUtils {
+
+    /**
+     * 房间最大玩家数量
+     */
+    public static final Integer MAX_PLAYER_COUNT = 5;
 
     /**
      * 创建游戏房间
@@ -58,6 +61,11 @@ public class SuoHaGameUtils {
             return false;
         }
 
+        int count = room.getPlayerList().size() + room.getAddPlayerList().size() - room.getLeavePlayerList().size();
+        if (count >= SuoHaGameUtils.MAX_PLAYER_COUNT) {
+            return false;
+        }
+
         // 判断密码是否正确
         if (room.getNeedPassWord()) {
             if (YanObjectUtils.isEmpty(passWord)) {
@@ -68,11 +76,16 @@ public class SuoHaGameUtils {
             }
         }
 
-        if (room.getPlayerList().size() < index) {
-            return false;
+        if (room.getPlaying()) {
+            room.getAddPlayerList().add(player);
+        } else {
+            if (room.getPlayerList().size() < index) {
+                return false;
+            }
+
+            room.getPlayerList().add(index, player);
         }
 
-        room.getPlayerList().add(index, player);
         ConcurrentHashMapCacheUtils.setCache(room.getGameRoomNo(), room);
         return true;
     }
@@ -94,10 +107,24 @@ public class SuoHaGameUtils {
             return false;
         }
 
+        room.getPlayerList().addAll(room.getAddPlayerList());
+
         room.setPlaying(true);
         room.setPokerList(getSuoHaPokers());
+        List<SuoHaPlayer> removePlayer = new ArrayList<>();
         for (SuoHaPlayer player : room.getPlayerList()) {
+            if (player.getAmount() == 0) {
+                removePlayer.add(player);
+                continue;
+            }
             player.setPlay(true);
+            player.setBetAmount(0);
+            player.setAllIn(false);
+            player.setAllBetAmount(0);
+            player.setSuoHaCard(new SuoHaCard());
+        }
+        if (!YanObjectUtils.isEmpty(removePlayer)) {
+            room.getPlayerList().removeAll(removePlayer);
         }
 
         ConcurrentHashMapCacheUtils.setCache(room.getGameRoomNo(), room);
@@ -148,6 +175,7 @@ public class SuoHaGameUtils {
             sendCardRound(room);
         }
 
+        ConcurrentHashMapCacheUtils.setCache(room.getGameRoomNo(), room);
         return true;
     }
 
@@ -189,7 +217,6 @@ public class SuoHaGameUtils {
             suoHaCard.setShowCardType(SuoHaCardTypeEnum.HIGH_CARD.getKey());
         }
 
-        // 当前只有高牌 对子 同花
         if (suoHaCard.getCount() >= 2) {
             addCardTypeChange(suoHaCard, card);
         }
@@ -206,107 +233,229 @@ public class SuoHaGameUtils {
     public static void addCardTypeChange(SuoHaCard suoHaCard,Card card) {
         // 先设置自己的牌类型
         if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.HIGH_CARD.getKey())) {
-            suoHaCard.setCardType(highCardToChange(suoHaCard.getCardList(), card));
+            suoHaCard.setCardType(SuoHaCardCompareUtils.highCardToChange(suoHaCard.getCardList(), card));
         } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SINGLE_COUPLET.getKey())) {
-            suoHaCard.setCardType(singleCoupleToChange(suoHaCard.getCardList(), card));
+            suoHaCard.setCardType(SuoHaCardCompareUtils.singleCoupleToChange(suoHaCard.getCardList(), card));
         } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.DOUBLE_COUPLET.getKey())) {
-            suoHaCard.setCardType(doubleCoupleToChange(suoHaCard.getCardList(), card));
+            suoHaCard.setCardType(SuoHaCardCompareUtils.doubleCoupleToChange(suoHaCard.getCardList(), card));
+        } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.THREE.getKey())) {
+            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
+        } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SEQUENCE.getKey())) {
+            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
+        } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER.getKey())) {
+            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
+        } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey())) {
+            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
         }
 
         // 再设置显示类型
-
-    }
-
-    /**
-     * 两对添加一张牌后的
-     * @param cardList
-     * @param card
-     * @return
-     */
-    public static Integer doubleCoupleToChange(List<Card> cardList, Card card) {
-        // 看看有没有可能变成葫芦
-        List<Card> coupleCard = PokerUtils.getPairCard(cardList, 2);
-        if (coupleCard.get(0).getValue().equalsIgnoreCase(card.getValue())) {
-            return SuoHaCardTypeEnum.GOURD.getKey();
+        List<Card> showCardList = suoHaCard.getCardList().subList(1, suoHaCard.getCardList().size() -1);
+        if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.HIGH_CARD.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.highCardToChange(showCardList, card));
+        } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SINGLE_COUPLET.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.singleCoupleToChange(showCardList, card));
+        } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.DOUBLE_COUPLET.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.doubleCoupleToChange(showCardList, card));
+        } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.THREE.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
+        } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SEQUENCE.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
+        } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
+        } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey())) {
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
         }
 
-        // 先看看有没有可能变成两对
-        List<Card> otherCardList = YanCollectionUtils.getSubList(cardList, coupleCard);
-        if (otherCardList.get(0).getValue().equalsIgnoreCase(card.getValue())) {
-            return SuoHaCardTypeEnum.GOURD.getKey();
-        }
-
-        return SuoHaCardTypeEnum.DOUBLE_COUPLET.getKey();
-    }
-
-    /**
-     * 单对添加牌后的牌型变化
-     */
-    public static Integer singleCoupleToChange(List<Card> cardList, Card card) {
-        // 先看看有没有可能变成3条
-        List<Card> coupleCard = PokerUtils.getPairCard(cardList, 2);
-        if (coupleCard.get(0).getValue().equalsIgnoreCase(card.getValue())) {
-            return SuoHaCardTypeEnum.THREE.getKey();
-        }
-
-        // 先看看有没有可能变成两对
-        List<Card> otherCardList = YanCollectionUtils.getSubList(cardList, coupleCard);
-        if (!YanObjectUtils.isEmpty(otherCardList)) {
-            for (Card card1 : otherCardList) {
-                if (card.getValue().equalsIgnoreCase(card1.getValue())) {
-                    return SuoHaCardTypeEnum.DOUBLE_COUPLET.getKey();
+        if (suoHaCard.getCount() < 4) {
+            if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SEQUENCE.getKey())) {
+                suoHaCard.setShowCardType(SuoHaCardTypeEnum.HIGH_CARD.getKey());
+            } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER.getKey())) {
+                suoHaCard.setShowCardType(SuoHaCardTypeEnum.HIGH_CARD.getKey());
+            } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey())) {
+                suoHaCard.setShowCardType(SuoHaCardTypeEnum.HIGH_CARD.getKey());
+            }
+        } else if (suoHaCard.getCount() == 4) {
+            if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.HIGH_CARD.getKey())) {
+                if (PokerUtils.verifyMayBeSequence(showCardList)) {
+                    suoHaCard.setShowCardType(SuoHaCardTypeEnum.SEQUENCE.getKey());
                 }
+            } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.DOUBLE_COUPLET.getKey())) {
+                suoHaCard.setShowCardType(SuoHaCardTypeEnum.GOURD.getKey());
+            } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.THREE.getKey())) {
+                suoHaCard.setShowCardType(SuoHaCardTypeEnum.FOUR.getKey());
             }
         }
-
-        return SuoHaCardTypeEnum.SINGLE_COUPLET.getKey();
     }
 
-    /**
-     * 高牌添加牌后牌型变化
-     */
-    public static Integer highCardToChange(List<Card> cardList, Card card) {
-        // 考虑变对子的情况
-        for (Card card1 : cardList) {
-            if (card1.getValue().equalsIgnoreCase(card.getValue())) {
-                return SuoHaCardTypeEnum.SINGLE_COUPLET.getKey();
-            }
-        }
-        // todo 变成顺子牌的情况还未考虑
-
-        return SuoHaCardTypeEnum.HIGH_CARD.getKey();
-    }
     /**
      * 获取当前游戏牌最大的人的索引下标
-     * @param suoHaGameUUid 游戏id
+     * @param roomNo 房间编号
      * @return 返回最大牌的索引下标
      */
-    public static Integer getNowMaxPersonIndex(String suoHaGameUUid) {
-        return 1;
+    public static Integer getNowMaxPersonIndex(String roomNo) {
+        SuoHaRoom room = (SuoHaRoom) ConcurrentHashMapCacheUtils.getCache(roomNo);
+        if (YanObjectUtils.isEmpty(room)) {
+            return -1;
+        }
+
+        if (!room.getPlaying()) {
+            return -1;
+        }
+
+        Integer index = 0;
+        for (int i = 1; i < room.getPlayerList().size(); i++) {
+            int compare = SuoHaCardCompareUtils.suoHaCardCompareShow(room.getPlayerList().get(index).getSuoHaCard(), room.getPlayerList().get(i).getSuoHaCard());
+            if (compare > 0) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     /**
      * 游戏的下注
-     * @param suoHaGameUUid 游戏id
+     * @param roomNo 房间编号
      */
-    public static void gameBet(String suoHaGameUUid) {
+    public static void gameBet(String roomNo) {
+        SuoHaRoom room = (SuoHaRoom) ConcurrentHashMapCacheUtils.getCache(roomNo);
+        if (YanObjectUtils.isEmpty(room)) {
+            throw new RuntimeException("房间号不存在");
+        }
 
+        if (!room.getPlaying()) {
+            throw new RuntimeException("房间还没开始游戏");
+        }
+
+        for (SuoHaPlayer player : room.getPlayerList()) {
+            player.setBetAmount(0);
+        }
+
+        /**
+         * 下注流程 首先循环一圈 判断下注金额
+         * 当当前下注人下注金额
+         */
+
+        int betAmount = -1;
+        Integer index = getNowMaxPersonIndex(roomNo);
+        int addBetIndex = index; // 最后一次加注人下标
+        for (int i = 0; ; i++) {
+            // 当前下注人
+            SuoHaPlayer player = room.getAddPlayerList().get((index + i)%room.getPlayerList().size());
+            if (player.getPlay()) {
+                if (!player.getAllIn()) {
+                    int roundAmount = getPlayerBetAmount(roomNo, player.getName());
+                    int roundAllAmount = roundAmount + player.getBetAmount();
+                    // 当下注总金额小于轮次下注总金额时,如果不是allIn就下注失败
+                    if (roundAllAmount < betAmount) {
+                        if (player.getAmount() == roundAmount) {
+                            player.setAllIn(true);
+                            player.setAmount(0);
+                            player.setBetAmount(roundAmount);
+                        } else {
+                            player.setPlay(false);
+                            int playerCount = 0;
+                            for (SuoHaPlayer player1 : room.getPlayerList()) {
+                                if (player1.getPlay()) {
+                                    playerCount++;
+                                }
+                            }
+
+                            if (playerCount == 1) {
+                                break;
+                            }
+                        }
+                    } if (roundAllAmount > betAmount) {
+                        player.setBetAmount(roundAmount);
+                        player.setAmount(player.getAmount() - roundAmount);
+                        betAmount = roundAllAmount;
+                        addBetIndex = index + i;
+                    } else {
+                        player.setBetAmount(roundAmount);
+                        player.setAmount(player.getAmount() - roundAmount);
+                    }
+                }
+
+                // 结束循环条件 当下一个下注人为上一次的加注人是结束
+                if ((index + i + 1)%room.getPlayerList().size() == addBetIndex) {
+                    break;
+                }
+            }
+        }
+
+        ConcurrentHashMapCacheUtils.setCache(room.getGameRoomNo(), room);
+    }
+
+    /**
+     * 游戏下注 todo
+     * @param roomNo
+     * @param name
+     * @return
+     */
+    private static int getPlayerBetAmount(String roomNo, String name) {
+        // 这个相当于前端调用接口
+        return 0;
     }
 
     /**
      * 判断游戏是否结束
-     * @param suoHaGameUUid 游戏id
-     * @return 是否结束
      */
-    public static Boolean verifyGameIsEnd(String suoHaGameUUid) {
+    public static Boolean verifyGameIsEnd(String roomNo) {
+        SuoHaRoom room = (SuoHaRoom) ConcurrentHashMapCacheUtils.getCache(roomNo);
+        if (YanObjectUtils.isEmpty(room)) {
+            throw new RuntimeException("房间号不存在");
+        }
+
+        int playerCount = 0;
+        for (SuoHaPlayer player : room.getPlayerList()) {
+            if (player.getPlay()) {
+                playerCount++;
+            }
+        }
+
+        if (playerCount == 1) {
+            return true;
+        }
         return null;
     }
 
     /**
      * 游戏结算
-     * @param suoHaGameUUid 游戏id
+     * @param roomNo 房间编号
      */
-    public static void settleAccounts(String suoHaGameUUid) {
+    public static void settleAccounts(String roomNo) {
+        SuoHaRoom room = (SuoHaRoom) ConcurrentHashMapCacheUtils.getCache(roomNo);
+        if (YanObjectUtils.isEmpty(room)) {
+            throw new RuntimeException("房间号不存在");
+        }
+
+        if (!room.getPlaying()) {
+            throw new RuntimeException("房间不在游戏中");
+        }
+
+        while(room.getAllAmount() > 0) {
+            SuoHaPlayer winPlayer = null;
+            for (SuoHaPlayer player : room.getPlayerList()) {
+                if (player.getPlay()) {
+                    if (YanObjectUtils.isEmpty(winPlayer)) {
+                        winPlayer = player;
+                    } else {
+                        int compare = SuoHaCardCompareUtils.suoHaCardCompare(player.getSuoHaCard(), winPlayer.getSuoHaCard());
+                        if (compare > 0) {
+                            winPlayer = player;
+                        }
+                    }
+                }
+            }
+
+            for (SuoHaPlayer player : room.getPlayerList()) {
+                if (player.getAllBetAmount() >= winPlayer.getAllBetAmount()) {
+                    player.setAllBetAmount(player.getAllBetAmount() - winPlayer.getAllBetAmount());
+                    winPlayer.setAmount(winPlayer.getAmount() + winPlayer.getAllBetAmount());
+                    room.setAllAmount(room.getAllAmount() - winPlayer.getAllBetAmount());
+                }
+            }
+            winPlayer.setPlay(false);
+        }
 
     }
 

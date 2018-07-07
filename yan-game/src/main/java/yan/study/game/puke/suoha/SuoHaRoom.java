@@ -42,6 +42,14 @@ public class SuoHaRoom {
      */
     private List<SuoHaPlayer> playerList;
     /**
+     * 新加游戏玩家列表
+     */
+    private List<SuoHaPlayer> addPlayerList;
+    /**
+     * 离开游戏玩家列表
+     */
+    private List<SuoHaPlayer> leavePlayerList;
+    /**
      * 当前游戏投注总金额
      */
     private Integer allAmount;
@@ -120,5 +128,21 @@ public class SuoHaRoom {
 
     public void setAllHaveShowCardList(List<Card> allHaveShowCardList) {
         this.allHaveShowCardList = allHaveShowCardList;
+    }
+
+    public List<SuoHaPlayer> getAddPlayerList() {
+        return addPlayerList;
+    }
+
+    public void setAddPlayerList(List<SuoHaPlayer> addPlayerList) {
+        this.addPlayerList = addPlayerList;
+    }
+
+    public List<SuoHaPlayer> getLeavePlayerList() {
+        return leavePlayerList;
+    }
+
+    public void setLeavePlayerList(List<SuoHaPlayer> leavePlayerList) {
+        this.leavePlayerList = leavePlayerList;
     }
 }

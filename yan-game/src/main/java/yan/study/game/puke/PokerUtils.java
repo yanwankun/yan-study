@@ -156,6 +156,58 @@ public class PokerUtils {
         return null;
     }
 
+    /**
+     * 判断给定牌是否是顺子
+     * @param cardList
+     * @return
+     */
+    public static Boolean verifyIsSequence(List<Card> cardList) {
+        if (cardList.size() == 1) {
+            return true;
+        }
+        Collections.sort(cardList);
+        int subValue = Card.POKER_VALUE_LIST.indexOf(cardList.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(cardList.get(cardList.size()-1).getValue());
+        if (subValue == cardList.size()-1) {
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
+     * 判断给定的一首牌是否是同花
+     * @param cardList
+     * @return
+     */
+    public static Boolean verifyIsSameFlower(List<Card> cardList) {
+        if (cardList.size() == 1) {
+            return true;
+        }
+        for (Card card : cardList) {
+            if (!card.getColor().equalsIgnoreCase(cardList.get(0).getColor())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 添加一张牌是否可能变成顺子
+     * @param cardList
+     * @return
+     */
+    public static boolean verifyMayBeSequence(List<Card> cardList) {
+        if (cardList.size() == 1) {
+            return true;
+        }
+        Collections.sort(cardList);
+        int subValue = Card.POKER_VALUE_LIST.indexOf(cardList.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(cardList.get(cardList.size()-1).getValue());
+        if (subValue == cardList.size()-1 || subValue == cardList.size()) {
+            return true;
+        }
+        return false;
+    }
+
 
     public static void main(String[] args) {
 //        List<Card> pokers = getNewPokers();
@@ -170,6 +222,8 @@ public class PokerUtils {
 ////        System.out.println(new Card(Card.POKER_COLOR_LIST.get(1), Card.CARD_MAX_KING).compareTo(new Card(Card.POKER_COLOR_LIST.get(0), Card.SMALL_KING)));
 
     }
+
+
 
     // 梭哈的牌型大小比较器
     class MyComparator implements Comparator<List<Card>> {
@@ -239,6 +293,8 @@ public class PokerUtils {
                 return commCompareTo(o1, o2);
             }
         }
+
+
 
     }
 

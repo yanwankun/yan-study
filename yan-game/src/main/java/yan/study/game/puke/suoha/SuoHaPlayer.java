@@ -95,4 +95,17 @@ public class SuoHaPlayer {
     public void setSuoHaCard(SuoHaCard suoHaCard) {
         this.suoHaCard = suoHaCard;
     }
+
+    @Override
+    public String toString() {
+        return "SuoHaPlayer{" +
+                "name='" + name + '\'' +
+                ", amount=" + amount +
+                ", suoHaCard=" + suoHaCard +
+                ", betAmount=" + betAmount +
+                ", allBetAmount=" + allBetAmount +
+                ", isAllIn=" + isAllIn +
+                ", isPlay=" + isPlay +
+                '}';
+    }
 }

@@ -21,6 +21,7 @@ public class SuoHaGameTest {
 
 
     public static void main(String[] args) {
+
         // 创建游戏房间
         String roomId = SuoHaGameUtils.createGameRoom(null);
 
@@ -31,7 +32,9 @@ public class SuoHaGameTest {
             SuoHaPlayer player = new SuoHaPlayer();
             player.setName(name);
             player.setAmount(init_amount);
-            player.setCardList(new ArrayList<>());
+            SuoHaCard suoHaCard = new SuoHaCard();
+            suoHaCard.setCardList(new ArrayList<>());
+            player.setSuoHaCard(suoHaCard);
             isEnter = SuoHaGameUtils.enterGameRoom(player, roomId, null, 0);
             if (!isEnter) {
                 // 添加失败，表示游戏玩家数量过多，结束添加
