@@ -8,9 +8,6 @@ public class YanCollectionUtils {
 
     /**
      * 获取list 的 元素个数为 count的 全部子集
-     * @param list
-     * @param count
-     * @return
      */
     public static <T> List<List<T>> getAllSubList(List<T> list, int count) {
         List<List<T>> dataList = new ArrayList<List<T>>();
@@ -38,10 +35,17 @@ public class YanCollectionUtils {
         return dataList;
     }
 
-    public static <T> List<T> getSubList(List<T> one, List<T> two) {
+
+    public static <T> List<T> getSubList(List<T> ...one) {
+        if (one.length < 2) {
+            throw new RuntimeException("parameter length is error");
+        }
         List subList = new ArrayList();
-        subList.addAll(one);
-        subList.removeAll(two);
+
+        subList.addAll(one[0]);
+        for (int i = 0; i < one.length; i++) {
+            subList.removeAll(one[i]);
+        }
         return subList;
     }
 

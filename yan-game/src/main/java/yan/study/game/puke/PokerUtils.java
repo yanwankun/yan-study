@@ -71,6 +71,8 @@ public class PokerUtils {
         if (one.size() != two.size()) {
             throw new RuntimeException("两手牌的数量不一样不能比较");
         }
+        Collections.sort(one, Collections.reverseOrder());
+        Collections.sort(two, Collections.reverseOrder());
 
         for (int i = 0; i< one.size(); i++) {
             int valueIndexOne = Card.POKER_VALUE_LIST.indexOf(one.get(i).getValue());
