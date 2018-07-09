@@ -3,12 +3,15 @@ package yan.study.game.puke.suoha;
 import cn.yan.study.utils.YanObjectUtils;
 import cn.yan.study.utils.YanStrUtils;
 import cn.yan.study.utils.cache.ConcurrentHashMapCacheUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import yan.study.game.puke.Card;
 import yan.study.game.puke.PokerUtils;
 import yan.study.game.puke.suoha.enums.SuoHaCardTypeEnum;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Created
@@ -17,6 +20,8 @@ import java.util.List;
  * Time  17:31
  */
 public class SuoHaGameUtils {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(SuoHaGameUtils.class);
 
     /**
      * 房间最大玩家数量
@@ -39,7 +44,10 @@ public class SuoHaGameUtils {
         }
 
         room.setPlayerList(new ArrayList<>());
+        room.setLeavePlayerList(new ArrayList<>());
+        room.setAddPlayerList(new ArrayList<>());
         room.setAllAmount(0);
+        room.setPlaying(false);
         room.setStartTime(new Date());
 
         ConcurrentHashMapCacheUtils.setCache(suoHaRoomNo, room);
@@ -110,6 +118,7 @@ public class SuoHaGameUtils {
         room.getPlayerList().addAll(room.getAddPlayerList());
 
         room.setPlaying(true);
+        room.setAllHaveShowCardList(new ArrayList<>());
         room.setPokerList(getSuoHaPokers());
         List<SuoHaPlayer> removePlayer = new ArrayList<>();
         for (SuoHaPlayer player : room.getPlayerList()) {
@@ -152,21 +161,19 @@ public class SuoHaGameUtils {
 
     /**
      * 梭哈发牌
-     * @param roomNo 房间编号
-     * @param count 发牌轮数
      */
-    public static Boolean sendCard(String roomNo, Integer count) {
+    public static void sendCard(String roomNo, Integer count) {
         SuoHaRoom room = (SuoHaRoom) ConcurrentHashMapCacheUtils.getCache(roomNo);
         if (YanObjectUtils.isEmpty(room)) {
-            return false;
+            throw new RuntimeException();
         }
 
         if (!room.getPlaying()) {
-            return false;
+            throw new RuntimeException();
         }
 
-        if (count > 4) {
-            return false;
+        if (count > 5) {
+            throw new RuntimeException();
         }
 
         if (count == 1) {
@@ -176,7 +183,6 @@ public class SuoHaGameUtils {
         }
 
         ConcurrentHashMapCacheUtils.setCache(room.getGameRoomNo(), room);
-        return true;
     }
 
     /**
@@ -225,9 +231,12 @@ public class SuoHaGameUtils {
         if (suoHaCard.getCount() == 0) {
             suoHaCard.setHideCard(card);
             suoHaCard.getCardList().add(card);
+            suoHaCard.setCount(1);
         } else {
             suoHaCard.getCardList().add(card);
+            suoHaCard.setCount(suoHaCard.getCount() + 1);
         }
+
     }
 
     public static void addCardTypeChange(SuoHaCard suoHaCard,Card card) {
@@ -241,11 +250,11 @@ public class SuoHaGameUtils {
         } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.THREE.getKey())) {
             suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
         } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SEQUENCE.getKey())) {
-            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
+            suoHaCard.setCardType(SuoHaCardCompareUtils.sequenceToChange(suoHaCard.getCardList(), card));
         } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER.getKey())) {
-            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
+            suoHaCard.setCardType(SuoHaCardCompareUtils.sameFlowerToChange(suoHaCard.getCardList(), card));
         } else if (suoHaCard.getCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey())) {
-            suoHaCard.setCardType(SuoHaCardCompareUtils.threeToChange(suoHaCard.getCardList(), card));
+            suoHaCard.setCardType(SuoHaCardCompareUtils.sameFlowerAndSequenceToChange(suoHaCard.getCardList(), card));
         }
 
         // 再设置显示类型
@@ -259,11 +268,11 @@ public class SuoHaGameUtils {
         } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.THREE.getKey())) {
             suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
         } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SEQUENCE.getKey())) {
-            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.sequenceToChange(showCardList, card));
         } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER.getKey())) {
-            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.sameFlowerToChange(showCardList, card));
         } else if (suoHaCard.getShowCardType().equals(SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey())) {
-            suoHaCard.setShowCardType(SuoHaCardCompareUtils.threeToChange(showCardList, card));
+            suoHaCard.setShowCardType(SuoHaCardCompareUtils.sameFlowerAndSequenceToChange(showCardList, card));
         }
 
         if (suoHaCard.getCount() < 4) {
@@ -302,11 +311,19 @@ public class SuoHaGameUtils {
             return -1;
         }
 
-        Integer index = 0;
+        Integer index = -1;
+
         for (int i = 1; i < room.getPlayerList().size(); i++) {
-            int compare = SuoHaCardCompareUtils.suoHaCardCompareShow(room.getPlayerList().get(index).getSuoHaCard(), room.getPlayerList().get(i).getSuoHaCard());
-            if (compare > 0) {
-                index = i;
+            SuoHaPlayer player = room.getPlayerList().get(i);
+            if (player.getPlay()) {
+                if (index == -1) {
+                    index = i;
+                } else {
+                    int compare = SuoHaCardCompareUtils.suoHaCardCompareShow(room.getPlayerList().get(index).getSuoHaCard(), room.getPlayerList().get(i).getSuoHaCard());
+                    if (compare > 0) {
+                        index = i;
+                    }
+                }
             }
         }
         return index;
@@ -335,22 +352,31 @@ public class SuoHaGameUtils {
          * 当当前下注人下注金额
          */
 
-        int betAmount = -1;
+        int betAmount = -1; // 当前轮次金额
         Integer index = getNowMaxPersonIndex(roomNo);
-        int addBetIndex = index; // 最后一次加注人下标
+        String addName = ""; // 最后一次加注人下标
         for (int i = 0; ; i++) {
+
             // 当前下注人
-            SuoHaPlayer player = room.getAddPlayerList().get((index + i)%room.getPlayerList().size());
+            SuoHaPlayer player = room.getPlayerList().get((index + i)%room.getPlayerList().size());
+            // 结束循环条件 当下一个下注人为上一次的加注人是结束
+            if (player.getName().equalsIgnoreCase(addName)) {
+                break;
+            }
+            if (i == 0) {
+                addName = player.getName();
+            }
             if (player.getPlay()) {
                 if (!player.getAllIn()) {
-                    int roundAmount = getPlayerBetAmount(roomNo, player.getName());
+
+                    int roundAmount = getPlayerBetAmount(room, player.getName(), betAmount, player.getBetAmount());
                     int roundAllAmount = roundAmount + player.getBetAmount();
                     // 当下注总金额小于轮次下注总金额时,如果不是allIn就下注失败
                     if (roundAllAmount < betAmount) {
                         if (player.getAmount() == roundAmount) {
                             player.setAllIn(true);
                             player.setAmount(0);
-                            player.setBetAmount(roundAmount);
+                            player.setBetAmount(roundAllAmount);
                         } else {
                             player.setPlay(false);
                             int playerCount = 0;
@@ -365,19 +391,14 @@ public class SuoHaGameUtils {
                             }
                         }
                     } if (roundAllAmount > betAmount) {
-                        player.setBetAmount(roundAmount);
+                        player.setBetAmount(roundAllAmount);
                         player.setAmount(player.getAmount() - roundAmount);
                         betAmount = roundAllAmount;
-                        addBetIndex = index + i;
+                        addName = player.getName();
                     } else {
                         player.setBetAmount(roundAmount);
                         player.setAmount(player.getAmount() - roundAmount);
                     }
-                }
-
-                // 结束循环条件 当下一个下注人为上一次的加注人是结束
-                if ((index + i + 1)%room.getPlayerList().size() == addBetIndex) {
-                    break;
                 }
             }
         }
@@ -387,13 +408,16 @@ public class SuoHaGameUtils {
 
     /**
      * 游戏下注 todo
-     * @param roomNo
-     * @param name
-     * @return
      */
-    private static int getPlayerBetAmount(String roomNo, String name) {
-        // 这个相当于前端调用接口
-        return 0;
+    private static int getPlayerBetAmount(SuoHaRoom room, String name, int betAmount, Integer amount) {
+        LOGGER.info("now is {} bet", name);
+        LOGGER.info("round amount is {}", betAmount);
+        LOGGER.info("have bet amount is {}", amount);
+        int mount = new Scanner(System.in).nextInt();
+        if (mount < 0) {
+            showRomInfo(room);
+        }
+        return mount;
     }
 
     /**
@@ -415,7 +439,7 @@ public class SuoHaGameUtils {
         if (playerCount == 1) {
             return true;
         }
-        return null;
+        return false;
     }
 
     /**
@@ -457,6 +481,12 @@ public class SuoHaGameUtils {
             winPlayer.setPlay(false);
         }
 
+    }
+
+    public static void showRomInfo(SuoHaRoom room) {
+        for (SuoHaPlayer player : room.getPlayerList()) {
+            System.out.println(player);
+        }
     }
 
     public static void main(String[] args) {

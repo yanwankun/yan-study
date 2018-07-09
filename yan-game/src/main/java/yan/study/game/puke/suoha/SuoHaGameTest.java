@@ -43,12 +43,13 @@ public class SuoHaGameTest {
         }
 
         boolean start = SuoHaGameUtils.startGame(roomId);
-        if (start) {
+        if (!start) {
             LOGGER.error("游戏开始失败,退出");
             System.exit(1);
         }
 
-        for (int round = 0; round < 5; round++) {
+        for (int round = 1; round <= 5; round++) {
+            LOGGER.info("send card round : {}", round);
             SuoHaGameUtils.sendCard(roomId, round);
             SuoHaGameUtils.gameBet(roomId);
             boolean isEnd = SuoHaGameUtils.verifyGameIsEnd(roomId);
@@ -56,6 +57,7 @@ public class SuoHaGameTest {
                 SuoHaGameUtils.settleAccounts(roomId);
                 break;
             }
+            LOGGER.info("round : {} is end ***************************************************", round);
         }
 
 

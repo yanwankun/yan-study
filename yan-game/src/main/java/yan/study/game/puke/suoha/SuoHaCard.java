@@ -2,6 +2,7 @@ package yan.study.game.puke.suoha;
 
 import yan.study.game.puke.Card;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,5 +71,21 @@ public class SuoHaCard{
 
     public void setShowCardType(Integer showCardType) {
         this.showCardType = showCardType;
+    }
+
+    public SuoHaCard() {
+        this.count = 0;
+        this.cardList = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return "SuoHaCard{" +
+                "count=" + count +
+                ", hideCard=" + hideCard +
+                ", cardList=" + cardList +
+                ", cardType=" + cardType +
+                ", showCardType=" + showCardType +
+                '}';
     }
 }

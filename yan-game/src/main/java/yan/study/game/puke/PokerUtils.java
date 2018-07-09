@@ -63,16 +63,13 @@ public class PokerUtils {
 
     /**
      * 通用比较一手牌的大小
-     * @param one
-     * @param two
-     * @return
      */
     public static int commCompareTo(List<Card> one, List<Card> two) {
         if (one.size() != two.size()) {
             throw new RuntimeException("两手牌的数量不一样不能比较");
         }
-        Collections.sort(one, Collections.reverseOrder());
-        Collections.sort(two, Collections.reverseOrder());
+        one.sort(Collections.reverseOrder());
+        two.sort(Collections.reverseOrder());
 
         for (int i = 0; i< one.size(); i++) {
             int valueIndexOne = Card.POKER_VALUE_LIST.indexOf(one.get(i).getValue());
@@ -87,6 +84,27 @@ public class PokerUtils {
             int colorIndexTwo = Card.POKER_COLOR_LIST.indexOf(two.get(i).getColor());
             if (colorIndexOne != colorIndexTwo) {
                 return colorIndexTwo - colorIndexOne;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * 通用比较一手牌的大小
+     */
+    public static int commCompareToNoColor(List<Card> one, List<Card> two) {
+        if (one.size() != two.size()) {
+            throw new RuntimeException("两手牌的数量不一样不能比较");
+        }
+        one.sort(Collections.reverseOrder());
+        two.sort(Collections.reverseOrder());
+
+        for (int i = 0; i< one.size(); i++) {
+            int valueIndexOne = Card.POKER_VALUE_LIST.indexOf(one.get(i).getValue());
+            int valueIndexTwo = Card.POKER_VALUE_LIST.indexOf(two.get(i).getValue());
+            if (valueIndexOne != valueIndexTwo) {
+                return valueIndexTwo - valueIndexOne;
             }
         }
 
@@ -134,7 +152,7 @@ public class PokerUtils {
      * 从一手牌中获取指定的相同的牌
      */
     public static List<Card> getPairCard(List<Card> cardList, Integer count) {
-        Collections.sort(cardList);
+        cardList.sort(Collections.reverseOrder());
         int count1;
         String value;
         for (int index = 0; index < cardList.size(); index++) {
@@ -160,26 +178,18 @@ public class PokerUtils {
 
     /**
      * 判断给定牌是否是顺子
-     * @param cardList
-     * @return
      */
     public static Boolean verifyIsSequence(List<Card> cardList) {
         if (cardList.size() == 1) {
             return true;
         }
-        Collections.sort(cardList);
+        cardList.sort(Collections.reverseOrder());
         int subValue = Card.POKER_VALUE_LIST.indexOf(cardList.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(cardList.get(cardList.size()-1).getValue());
-        if (subValue == cardList.size()-1) {
-            return true;
-        }
-        return false;
-
+        return subValue == cardList.size() - 1;
     }
 
     /**
      * 判断给定的一首牌是否是同花
-     * @param cardList
-     * @return
      */
     public static Boolean verifyIsSameFlower(List<Card> cardList) {
         if (cardList.size() == 1) {
@@ -195,19 +205,14 @@ public class PokerUtils {
 
     /**
      * 添加一张牌是否可能变成顺子
-     * @param cardList
-     * @return
      */
     public static boolean verifyMayBeSequence(List<Card> cardList) {
         if (cardList.size() == 1) {
             return true;
         }
-        Collections.sort(cardList);
+        cardList.sort(Collections.reverseOrder());
         int subValue = Card.POKER_VALUE_LIST.indexOf(cardList.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(cardList.get(cardList.size()-1).getValue());
-        if (subValue == cardList.size()-1 || subValue == cardList.size()) {
-            return true;
-        }
-        return false;
+        return subValue == cardList.size() - 1 || subValue == cardList.size();
     }
 
 
@@ -227,78 +232,78 @@ public class PokerUtils {
 
 
 
-    // 梭哈的牌型大小比较器
-    class MyComparator implements Comparator<List<Card>> {
-
-        @Override
-        public int compare(List<Card> o1, List<Card> o2) {
-            if (o1.size() != o2.size()) {
-                return -1;
-            }
-
-            if (o1.size() == 1) {
-                return o1.get(0).compareTo(o2.get(0));
-            }
-            Comparator comparator = Collections.reverseOrder();
-
-            // 对子牌最大
-            if (o1.size() == 2) {
-                Collections.sort(o1, comparator);
-                Collections.sort(o2, comparator);
-                return compareTo2(o1, o2);
-            }
-
-            // 三条 > 2条 > 高牌
-            if (o1.size() == 3) {
-                if (havePairCount(o1, 3)) {
-                    if (havePairCount(o2, 3)) {
-                        return commCompareTo(o1, o2);
-                    }
-                    return 1;
-                } else {
-                    if (havePairCount(o2, 3)) {
-                        return -1;
-                    } else {
-                        // 都没有三条
-                        if (havePairCard(o1)) {
-                            if (havePairCard(o2)) {
-                                List<Card> dui1 = getPairCard(o1, 2);
-                                List<Card> dui2 = getPairCard(o2, 2);
-                                // todo 这个写法不好
-                                return -1;
-                            }
-                            return 1;
-                        } else {
-                            if (havePairCard(o2)) {
-                                return -1;
-                            }
-                            // 都没有对子
-                            return commCompareTo(o1, o2);
-                        }
-                    }
-                }
-            }
-
-            return -1;
-        }
-
-        private int compareTo2(List<Card> o1, List<Card> o2) {
-            if (havePairCard(o1)) {
-                if (havePairCard(o2)) {
-                    return commCompareTo(o1, o2);
-                }
-                return 1;
-            } else {
-                if (havePairCard(o2)) {
-                    return -1;
-                }
-                return commCompareTo(o1, o2);
-            }
-        }
-
-
-
-    }
+//    // 梭哈的牌型大小比较器
+//    class MyComparator implements Comparator<List<Card>> {
+//
+//        @Override
+//        public int compare(List<Card> o1, List<Card> o2) {
+//            if (o1.size() != o2.size()) {
+//                return -1;
+//            }
+//
+//            if (o1.size() == 1) {
+//                return o1.get(0).compareTo(o2.get(0));
+//            }
+//            Comparator comparator = Collections.reverseOrder();
+//
+//            // 对子牌最大
+//            if (o1.size() == 2) {
+//                Collections.sort(o1, comparator);
+//                Collections.sort(o2, comparator);
+//                return compareTo2(o1, o2);
+//            }
+//
+//            // 三条 > 2条 > 高牌
+//            if (o1.size() == 3) {
+//                if (havePairCount(o1, 3)) {
+//                    if (havePairCount(o2, 3)) {
+//                        return commCompareTo(o1, o2);
+//                    }
+//                    return 1;
+//                } else {
+//                    if (havePairCount(o2, 3)) {
+//                        return -1;
+//                    } else {
+//                        // 都没有三条
+//                        if (havePairCard(o1)) {
+//                            if (havePairCard(o2)) {
+//                                List<Card> dui1 = getPairCard(o1, 2);
+//                                List<Card> dui2 = getPairCard(o2, 2);
+//                                // todo 这个写法不好
+//                                return -1;
+//                            }
+//                            return 1;
+//                        } else {
+//                            if (havePairCard(o2)) {
+//                                return -1;
+//                            }
+//                            // 都没有对子
+//                            return commCompareTo(o1, o2);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            return -1;
+//        }
+//
+//        private int compareTo2(List<Card> o1, List<Card> o2) {
+//            if (havePairCard(o1)) {
+//                if (havePairCard(o2)) {
+//                    return commCompareTo(o1, o2);
+//                }
+//                return 1;
+//            } else {
+//                if (havePairCard(o2)) {
+//                    return -1;
+//                }
+//                return commCompareTo(o1, o2);
+//            }
+//        }
+//
+//
+//
+//    }
 
 
 

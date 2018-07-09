@@ -5,8 +5,6 @@ import yan.study.game.puke.Card;
 import yan.study.game.puke.PokerUtils;
 import yan.study.game.puke.YanCollectionUtils;
 import yan.study.game.puke.suoha.enums.SuoHaCardTypeEnum;
-
-import java.net.CookieHandler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,18 +16,19 @@ import java.util.List;
  * Time  8:50
  */
 public class SuoHaCardCompareUtils {
+
     /**
      * 同花顺加一张牌的变化
      */
     public static Integer sameFlowerAndSequenceToChange(List<Card> cardList, Card card) {
-        List<Card> sequeenceList = new ArrayList<>();
-        sequeenceList.addAll(cardList);
-        sequeenceList.add(card);
+        List<Card> sequenceList = new ArrayList<>();
+        sequenceList.addAll(cardList);
+        sequenceList.add(card);
 
         // 先看看有没有可能是同花
-        if (PokerUtils.verifyIsSameFlower(sequeenceList)) {
+        if (PokerUtils.verifyIsSameFlower(sequenceList)) {
             // 同花顺
-            if (PokerUtils.verifyIsSequence(sequeenceList)) {
+            if (PokerUtils.verifyIsSequence(sequenceList)) {
                 return SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey();
             }
 
@@ -37,12 +36,12 @@ public class SuoHaCardCompareUtils {
         }
 
         // 只是顺子
-        if (PokerUtils.verifyIsSequence(sequeenceList)) {
+        if (PokerUtils.verifyIsSequence(sequenceList)) {
             return SuoHaCardTypeEnum.SEQUENCE.getKey();
         }
 
         // 单对
-        if (PokerUtils.havePairCount(sequeenceList, 2)) {
+        if (PokerUtils.havePairCount(sequenceList, 2)) {
             return SuoHaCardTypeEnum.SINGLE_COUPLET.getKey();
         }
 
@@ -52,9 +51,6 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 同花加一张牌的变化
-     * @param cardList
-     * @param card
-     * @return
      */
     public static Integer sameFlowerToChange(List<Card> cardList, Card card) {
         List<Card> sequeenceList = new ArrayList<>();
@@ -82,9 +78,6 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 顺子加一张牌的变化
-     * @param cardList
-     * @param card
-     * @return
      */
     public static Integer sequenceToChange(List<Card> cardList, Card card) {
         List<Card> sequeenceList = new ArrayList<>();
@@ -107,9 +100,6 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 三条添加一张牌后的拍醒变化
-     * @param cardList
-     * @param card
-     * @return
      */
     public static Integer threeToChange(List<Card> cardList, Card card) {
         // 先看看有没有可能变成4条
@@ -130,9 +120,6 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 两对添加一张牌后的
-     * @param cardList
-     * @param card
-     * @return
      */
     public static Integer doubleCoupleToChange(List<Card> cardList, Card card) {
         // 看看有没有可能变成葫芦
@@ -195,13 +182,10 @@ public class SuoHaCardCompareUtils {
     }
 
     /**
-     * 更具显示牌型比较大小 todo
-     * @param o1
-     * @param o2
-     * @return
+     * 根据显示牌型比较大小
      */
     public static Integer suoHaCardCompareShow(SuoHaCard o1, SuoHaCard o2) {
-        if (o1.getShowCardType() != o2.getShowCardType()) {
+        if (!o1.getShowCardType().equals(o2.getShowCardType())) {
             return o2.getShowCardType() - o1.getShowCardType();
         }
 
@@ -236,18 +220,88 @@ public class SuoHaCardCompareUtils {
             return doubleCoupletCompare(list1, list2);
         }
 
-        return -1;
+        if (SuoHaCardTypeEnum.SINGLE_COUPLET.getKey().equals(o1.getShowCardType())) {
+            return singleCoupletCompare(list1, list2);
+        }
+
+        return PokerUtils.commCompareTo(list1, list2);
+    }
+
+    /**
+     * 根据真实牌型比较大小
+     */
+    public static Integer suoHaCardCompare(SuoHaCard o1, SuoHaCard o2) {
+        if (!o1.getShowCardType().equals(o2.getShowCardType())) {
+            return o2.getShowCardType() - o1.getShowCardType();
+        }
+
+        List<Card> list1 = o1.getCardList();
+        List<Card> list2 = o2.getCardList();
+
+        if (SuoHaCardTypeEnum.SAME_FLOWER_AND_SEQUENCE.getKey().equals(o1.getShowCardType())) {
+            return PokerUtils.commCompareTo(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.FOUR.getKey().equals(o1.getShowCardType())) {
+            return fourCompare(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.GOURD.getKey().equals(o1.getShowCardType())) {
+            return threeCompare(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.SAME_FLOWER.getKey().equals(o1.getShowCardType())) {
+            return PokerUtils.commCompareTo(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.SEQUENCE.getKey().equals(o1.getShowCardType())) {
+            return PokerUtils.commCompareTo(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.THREE.getKey().equals(o1.getShowCardType())) {
+            return threeCompare(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.DOUBLE_COUPLET.getKey().equals(o1.getShowCardType())) {
+            return doubleCoupletCompare(list1, list2);
+        }
+
+        if (SuoHaCardTypeEnum.SINGLE_COUPLET.getKey().equals(o1.getShowCardType())) {
+            return singleCoupletCompare(list1, list2);
+        }
+
+        return PokerUtils.commCompareTo(list1, list2);
+    }
+
+    private static Integer singleCoupletCompare(List<Card> list1, List<Card> list2) {
+        list1.sort(Collections.reverseOrder());
+        list2.sort(Collections.reverseOrder());
+
+        List<Card> twoCard11 = PokerUtils.getPairCard(list1, 2);
+        List<Card> twoCard21 = PokerUtils.getPairCard(list2, 2);
+
+        int compare = Card.POKER_VALUE_LIST.indexOf(twoCard21.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(twoCard11.get(0).getValue());
+        if (compare != 0) {
+            return compare;
+        }
+
+        List<Card> lastCard1 = YanCollectionUtils.getSubList(list1, twoCard11);
+        List<Card> lastCard2 = YanCollectionUtils.getSubList(list2, twoCard21);
+
+        compare =  PokerUtils.commCompareToNoColor(lastCard1, lastCard2);
+        if (compare != 0) {
+            return compare;
+        }
+
+        return PokerUtils.commCompareTo(list1, list2);
     }
 
     /**
      * 两对比较大小
-     * @param list1
-     * @param list2
-     * @return
      */
     private static Integer doubleCoupletCompare(List<Card> list1, List<Card> list2) {
-        Collections.sort(list1, Collections.reverseOrder());
-        Collections.sort(list2, Collections.reverseOrder());
+        list1.sort(Collections.reverseOrder());
+        list2.sort(Collections.reverseOrder());
 
         List<Card> twoCard11 = PokerUtils.getPairCard(list1, 2);
         List<Card> twoCard21 = PokerUtils.getPairCard(list2, 2);
@@ -279,24 +333,11 @@ public class SuoHaCardCompareUtils {
     }
 
     /**
-     * 根据真实牌型比较大小 todo
-     * @param o1
-     * @param o2
-     * @return
-     */
-    public static Integer suoHaCardCompare(SuoHaCard o1, SuoHaCard o2) {
-        return -1;
-    }
-
-    /**
-     *
-     * @param o1
-     * @param o2
-     * @return
+     * 三条比较大小
      */
     private static Integer threeCompare(List<Card> o1, List<Card> o2) {
-        Collections.sort(o1, Collections.reverseOrder());
-        Collections.sort(o2, Collections.reverseOrder());
+        o1.sort(Collections.reverseOrder());
+        o2.sort(Collections.reverseOrder());
 
         List<Card> threeCard1 = PokerUtils.getPairCard(o1, 3);
         List<Card> threeCard2 = PokerUtils.getPairCard(o2, 3);
@@ -329,9 +370,6 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 两张牌比较大小不管花色
-     * @param ot1
-     * @param ot2
-     * @return
      */
     private static int twoCardCompareNoColor(List<Card> ot1, List<Card> ot2) {
         return 0;
@@ -339,9 +377,6 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 同花顺比较大小
-     * @param o1
-     * @param o2
-     * @return
      */
     private static Integer sameFlowerAndSequenceShowCompare(List<Card> o1, List<Card> o2) {
         Card maxO1 = findNayMaxCard(o1);
@@ -351,16 +386,13 @@ public class SuoHaCardCompareUtils {
 
     /**
      * 四条的完整大小比较
-     * @param o1
-     * @param o2
-     * @return
      */
     private static Integer fourCompare(List<Card> o1, List<Card> o2) {
         List<Card> fourCard1 = PokerUtils.getPairCard(o1, 4);
         List<Card> fourCard2 = PokerUtils.getPairCard(o2, 4);
 
-        Collections.sort(fourCard1, Collections.reverseOrder());
-        Collections.sort(fourCard2, Collections.reverseOrder());
+        fourCard1.sort(Collections.reverseOrder());
+        fourCard2.sort(Collections.reverseOrder());
 
         int compare = Card.POKER_VALUE_LIST.indexOf(fourCard2.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(fourCard1.get(0).getValue());
         if (compare != 0) {
@@ -391,11 +423,9 @@ public class SuoHaCardCompareUtils {
     }
     /**
      * 找到一个顺子可能的最大牌
-     * @param cardList
-     * @return
      */
     private static Card findNayMaxCard(List<Card> cardList) {
-        Collections.sort(cardList);
+        cardList.sort(Collections.reverseOrder());
         int subValue = Card.POKER_VALUE_LIST.indexOf(cardList.get(0).getValue()) - Card.POKER_VALUE_LIST.indexOf(cardList.get(cardList.size()-1).getValue());
         if (subValue == cardList.size()) {
             return cardList.get(0);
