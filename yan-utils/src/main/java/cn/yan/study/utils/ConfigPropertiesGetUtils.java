@@ -45,9 +45,9 @@ public class ConfigPropertiesGetUtils {
     public void getConfigProperties() throws IOException  {
 
         for (String fileName : configFileList) {
-            FileReader fr=new FileReader(fileName);
-            BufferedReader br=new BufferedReader(fr);
-            String line="";
+            FileReader fr = new FileReader(fileName);
+            BufferedReader br = new BufferedReader(fr);
+            String line;
             while ((line=br.readLine())!=null) {
                 if (line.contains("FundamentalConfigProvider") && line.contains("return")) {
                     getReturnLine(line);
