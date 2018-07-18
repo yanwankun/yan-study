@@ -2,18 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <artifactId>yan-study</artifactId>
-    <groupId>yan-study-root</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <parent>
+        <artifactId>queue-study</artifactId>
+        <groupId>yan-study-root</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <artifactId>rabbit-mq-study</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>spring-boot-study</module>
-        <module>elasticsearch-study</module>
-        <module>queue-study</module>
-        <module>yan-utils</module>
-        <module>yan-game</module>
+        <module>mq-client</module>
     </modules>
 
 
