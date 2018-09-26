@@ -14,6 +14,7 @@
         <module>queue-study</module>
         <module>yan-utils</module>
         <module>yan-game</module>
+        <module>yan-tcfs</module>
     </modules>
 
 

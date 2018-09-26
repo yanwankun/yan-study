@@ -26,7 +26,7 @@ import java.io.IOException;
  * Time  18:34
  */
 @SpringBootApplication(scanBasePackages="cn.yan.test.spring.boot.database")
-//@ServletComponentScan(value = "cn.yan.test.spring.boot.database.controller")
+//@ServletComponentScan(value = "cn.yan.demo.spring.boot.database.controller")
 public class AppApplication {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(AppApplication.class, args);

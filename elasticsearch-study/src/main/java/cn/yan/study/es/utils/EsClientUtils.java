@@ -93,7 +93,7 @@ public class EsClientUtils {
         updateRequest.doc(jsonBuilder()
                 .startObject()
                 .field("user", "yanwankun")
-                .field("testField", "test")
+                .field("testField", "demo")
                 .endObject());
         client.update(updateRequest).get();
     }
@@ -222,7 +222,7 @@ public class EsClientUtils {
         SearchResponse response = client.prepareSearch("index1", "index2")
                 .setTypes("type1", "type2")
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
+                .setQuery(QueryBuilders.termQuery("multi", "demo"))                 // Query
                 .setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
                 .setFrom(0).setSize(60).setExplain(true)
                 .get();

@@ -78,7 +78,7 @@ public class EsParentChildTest {
                 .setTypes("type1", "type2")
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 //                .setQuery(ParentIdQueryBuilder.parseInnerQueryBuilder(XContentParser))                 // Query
-                .setQuery(QueryBuilders.termQuery("multi", "test"))                 // Query
+                .setQuery(QueryBuilders.termQuery("multi", "demo"))                 // Query
                 .setPostFilter(QueryBuilders.rangeQuery("age").from(12).to(18))     // Filter
                 .setFrom(0).setSize(60).setExplain(true)
                 .get();
