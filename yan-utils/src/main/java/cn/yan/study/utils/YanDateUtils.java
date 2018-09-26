@@ -14,6 +14,7 @@ public class YanDateUtils {
     public static final String TIME_STRING_1 = "yyyy-MM-dd";
     public static final String TIME_STRING_2 = "yyyy-MM-dd HH:mm:ss";
     public static final String TIME_STRING_3 = "yyyyMMddHHmmss";
+    public static final String TIME_STRING_4 = "yyyyMMddHHmmssSSS";
 
     public static Date parseDate(String dateString, String formatString) {
         SimpleDateFormat sdf = new SimpleDateFormat(formatString);
