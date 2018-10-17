@@ -15,6 +15,7 @@
         <module>yan-utils</module>
         <module>yan-game</module>
         <module>yan-tcfs</module>
+        <module>yan-java-backend</module>
     </modules>
 
 
