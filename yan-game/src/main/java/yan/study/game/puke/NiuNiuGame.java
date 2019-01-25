@@ -326,6 +326,7 @@ public class NiuNiuGame {
          * @param o
          * @return
          */
+        @Override
         public int compareTo(Object o) {
             if (!(o instanceof NiuResult)) {
                 return -1;

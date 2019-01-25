@@ -262,9 +262,9 @@ class CacheObj {
 
     @Override
     public String toString() {
-        return "CacheObj{" +
-                "CacheValue=" + CacheValue +
-                ", ttlTime=" + ttlTime +
+        return "CacheObj {" +
+                "CacheValue = " + CacheValue +
+                ", ttlTime = " + ttlTime +
                 '}';
     }
 }
