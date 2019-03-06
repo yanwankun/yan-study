@@ -1,0 +1,124 @@
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+  servlet:
+    context-path: /
+
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.17.0.1:3306/hee?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false
+      username: hee
+      password: LQ0knNOarZuO^*r3
+      initial-size: 0
+      min-idle: 3
+      max-active: 20
+      max-wait: 30000
+      validationQuery: select
+      test-on-borrow: false
+      test-while-idle: true
+      test-on-return: false
+      web-stat-filter:
+        session-stat-max-count: 5000
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 5000
+      time-between-eviction-runs-millis: 120000
+      min-evictable-idle-time-millis: 300000
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 20
+      remove-abandoned: true
+      remove-abandoned-timeout-millis: 20000
+      log-abandoned: true
+      log-different-thread: true
+      connection-properties: druid.stat.mergeSql=true;druid.stat.logSlowSql=true;druid.stat.slowSqlMillis=3000
+      use-global-data-source-stat: true
+  redis:
+    host: 172.17.0.1
+    database: 1
+    port: 10010
+    password: TD7w%HeUQdaf
+    ssl: false
+    jedis:
+      pool:
+        max-active: 8
+        min-idle: 1
+        max-idle: 8
+        max-wait: -1ms
+    timeout: 100000ms
+  data:
+    redis:
+      repositories:
+        enabled: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: initialCapacity=50,maximumSize=500,expireAfterWrite=60s,weakKeys,recordStats
+
+# MybatisPlus Start #
+mybatis-plus:
+  # 如果是放在src/main/java目录下 classpath:/com/yourpackage/*/mapper/*Mapper.xml
+  # 如果是放在resource目录 classpath:/mapper/*Mapper.xml
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  check-config-location: true
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.hee.project.module.user;com.hee.project.module.operation
+  global-config:
+#    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+    #自定义填充策略接口实现
+#    meta-object-handler: com.prophet.common.handler.MetaObjectFillHandler
+    sql-parser-cache: true
+    db-config:
+      id-type: auto
+      field-strategy: default
+      #驼峰下划线转换
+      table-underline: true
+      #mp2.3+ 全局表前缀 mp_
+      table-prefix: tb_
+      #数据库大写下划线转换
+      capital-mode: true
+      # Sequence序列接口实现类配置
+  #    key-generator: com.baomidou.mybatisplus.incrementer.OracleKeyGenerator
+      #逻辑删除配置（下面3个配置）
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+  configuration:
+    #配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    #配置JdbcTypeForNull, oracle数据库必须配置
+    jdbc-type-for-null: 'null'
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+# MybatisPlus End #
+
+pagehelper:
+  helperDialect: mysql
+#  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+## 区块链需要参数
+oas:
+  contract:
+    address: sfuishiudhu
+
+
+eth:
+  wallet:
+    pub: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsFBgfUw5yU1Bfy54hbujkfUbB5uk6jUdMs01U0pu/3/NBYliN2YtfJu3Dkrr8W2ksgN3J1syR74prhknuz0kd3ON8WHivhgdjyxZRhvxm9kKTOhSyNGvpVXvRML/EDmiNEqIs7xp3+URpw7T9HchSt0gHAKFvmNAX0MVXFKf7AElpDojfmnSq3G1AljOsU7J/wlxzLaz5/1CyPIyUZNp230ciVOrwjWFFwgXfQedDNbYd1vfv9H8Zs0U233ZBWZfTuLiTwH2+boy0W4r74P/YG4JeH4vDx9xvM/vzrw71leTxJGYr3z2f+K//L+ACGoavIwHTQZnVmDOgGambnY9cwIDAQAB
+    pri: testpri
+
+oss:
+  eth-wallets:
+    bucket: eth-wallets
+    dir: eth-wallets
+    accessKeyId: LTAI7SoM9iaotZUd
+    accessKeySecret: c54QjEz2HjkXRNB0oL3AcwdxWcqZRl
+
+file:
+  dir: /usr/local/tomcat

@@ -16,6 +16,8 @@
         <module>yan-game</module>
         <module>yan-tcfs</module>
         <module>yan-java-backend</module>
+        <module>yan-jisuanke</module>
+        <module>yan-study-test</module>
     </modules>
 
 

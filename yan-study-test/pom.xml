@@ -9,16 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-study</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>spring-boot-demo-first</module>
-        <module>spring-boot-redis-session</module>
-        <module>spring-boot-database-test</module>
-        <module>spring-boot-rabbitmq-demo</module>
-        <module>spring-boot-websocket-netty-mychat</module>
-        <module>spring-boot-dubbo-demo</module>
-    </modules>
+    <artifactId>yan-study-test</artifactId>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
+
 
 
 </project>
