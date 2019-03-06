@@ -15,6 +15,8 @@
         <module>spring-boot-demo-first</module>
         <module>spring-boot-redis-session</module>
         <module>spring-boot-database-test</module>
+        <module>spring-boot-dubbo-demo</module>
+        <module>spring-boot-netty-websocket</module>
     </modules>
 
 
