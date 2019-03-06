@@ -26,7 +26,9 @@ public class TokenBucket {
     // 一个桶的单位是1字节
     private int everyTokenSize = 1;
 
-    // 瞬间最大流量
+    /**
+    /*瞬间最大流量
+     */
     private int maxFlowRate;
 
     // 平均流量

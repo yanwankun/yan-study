@@ -1,5 +1,9 @@
 package cn.yan.study.utils;
 
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created
  * User  wankunYan
@@ -32,7 +36,7 @@ public class YanStrUtils {
     }
 
     // todo
-    private static String getRandomCode(int length) {
+    public static String getRandomCode(int length) {
         return "yan";
     }
 }
