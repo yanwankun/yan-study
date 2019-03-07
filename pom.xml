@@ -16,6 +16,7 @@
         <module>yan-game</module>
         <module>yan-tcfs</module>
         <module>yan-java-backend</module>
+        <module>study-netty</module>
     </modules>
 
 
