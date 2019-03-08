@@ -32,6 +32,17 @@
             <version>1.2.14</version>
         </dependency>
         <dependency>
+<<<<<<< HEAD
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.4.2</version>
+        </dependency>
+=======
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.54</version>
@@ -50,6 +61,7 @@
         </dependency>
 
 
+>>>>>>> origin/dev
         <!--<dependency>-->
             <!--<groupId>com.github.multiformats</groupId>-->
             <!--<artifactId>java-multiaddr</artifactId>-->

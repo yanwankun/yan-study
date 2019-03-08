@@ -17,6 +17,8 @@
         <module>yan-tcfs</module>
         <module>yan-java-backend</module>
         <module>study-netty</module>
+        <module>yan-jisuanke</module>
+        <module>yan-study-test</module>
     </modules>
 
 
