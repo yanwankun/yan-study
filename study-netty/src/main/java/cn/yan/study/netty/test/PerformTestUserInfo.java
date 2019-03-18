@@ -1,6 +1,6 @@
 package cn.yan.study.netty.test;
 
-import cn.yan.study.netty.domian.UserInfo;
+import cn.yan.study.netty.domain.UserInfo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

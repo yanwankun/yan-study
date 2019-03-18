@@ -1,7 +1,9 @@
 package cn.yan.study.springboot.rabbitmq;
 
 import cn.yan.study.springboot.rabbitmq.domian.MyMsg;
+import cn.yan.study.springboot.rabbitmq.sender.FanoutSender;
 import cn.yan.study.springboot.rabbitmq.sender.RabbitMqSender;
+import cn.yan.study.springboot.rabbitmq.sender.TopicSender;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,10 @@ public class ProjectApplicationTests {
     private AmqpTemplate rabbitTemplate;
     @Autowired
     private RabbitMqSender rabbitMqSender;
+    @Autowired
+    private TopicSender topicSender;
+    @Autowired
+    private FanoutSender fanoutSender;
 
 
     @Test
@@ -72,4 +78,17 @@ public class ProjectApplicationTests {
     }
 
 
+    @Test
+    public void sendTopicMsgT() {
+        topicSender.send();
+        topicSender.send1();
+        topicSender.send2();
+    }
+
+    @Test
+    public void sendFanoutMsgT() {
+        fanoutSender.send();
+        fanoutSender.send1();
+        fanoutSender.send2();
+    }
 }

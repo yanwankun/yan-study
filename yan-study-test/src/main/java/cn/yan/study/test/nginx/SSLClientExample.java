@@ -61,7 +61,8 @@ public class SSLClientExample {
      *keytool -genkey -keyalg RSA -validity 3650 -keystore "keystore.jks" -storepass "storepassword" -keypass "keypassword" -alias "default" -dname "CN=127.0.0.1, OU=MyOrgUnit, O=MyOrg, L=MyCity, S=MyRegion, C=MyCountry"
      */
     public static void main( String[] args ) throws Exception {
-        WebSocketChatClient chatclient = new WebSocketChatClient( new URI( "wss://www.yanwankun.online:8443/websocket" ) );
+//        WebSocketChatClient chatclient = new WebSocketChatClient( new URI( "wss://www.alidaughter.cn:8443/websocket" ) );
+        WebSocketChatClient chatclient = new WebSocketChatClient( new URI( "wss://geex.vip:8443/websocket" ) );
 
         // load up the key store
         String STORETYPE = "JKS";
