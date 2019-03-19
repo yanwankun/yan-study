@@ -1,18 +1,10 @@
 package cn.yan.test.spring.boot.demo.first.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Created
@@ -21,11 +13,12 @@ import java.util.Map;
  * Time  18:36
  */
 @RestController
+@RequestMapping("/test/")
 public class IndexController {
 
-    @GetMapping("/index")
-    public ResponseEntity helloWord() {
-        return ResponseEntity.ok("hello word");
+    @GetMapping("hello")
+    public String helloWord() {
+        return "hello world";
     }
 
 }
