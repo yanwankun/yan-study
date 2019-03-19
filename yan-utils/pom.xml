@@ -60,7 +60,11 @@
             <version>2.8.5</version>
         </dependency>
 
-
+        <!--<dependency>-->
+            <!--<groupId>com.github.multiformats</groupId>-->
+            <!--<artifactId>java-multiaddr</artifactId>-->
+            <!--<version>v1.3.0</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

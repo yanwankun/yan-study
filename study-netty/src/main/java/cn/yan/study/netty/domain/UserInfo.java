@@ -1,4 +1,4 @@
-package cn.yan.study.netty.domian;
+package cn.yan.study.netty.domain;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
