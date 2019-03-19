@@ -194,7 +194,11 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static void startCleanThread() {
         if (!CLEAN_THREAD_IS_RUN) {
-            new Thread(new CleanTimeOutThread()).start();
+            CleanTimeOutThread cleanTimeOutThread = new CleanTimeOutThread();
+            Thread thread = new Thread(cleanTimeOutThread);
+            //设置为后台守护线程
+            thread.setDaemon(true);
+            thread.start();
 //            executor.submit(new CleanTimeOutThread());
         }
     }
