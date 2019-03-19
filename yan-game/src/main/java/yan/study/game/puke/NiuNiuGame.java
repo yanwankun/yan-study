@@ -2,6 +2,7 @@ package yan.study.game.puke;
 
 import cn.yan.study.utils.YanStrUtils;
 import cn.yan.study.utils.cache.ConcurrentHashMapCacheUtils;
+import com.alibaba.fastjson.JSON;
 
 import java.util.*;
 
@@ -195,6 +196,20 @@ public class NiuNiuGame {
         }
     }
 
+    public static void main(String[] args) {
+        List<Integer> list = Arrays.asList(8,7,6,6,3);
+        List<List<Integer>> dataList = YanCollectionUtils.getAllSubList(list, 3);
+        System.out.println(dataList.size());
+        for (List<Integer> dList : dataList) {
+            System.out.println("*****************");
+            System.out.println(JSON.toJSONString(dList));
+            System.out.println("*********************************");
+        }
+//        String gameUUid = createGame(3, Arrays.asList("qibin", "yan", "zhang"));
+//        sendCard(gameUUid);
+//        showResult(gameUUid);
+    }
+
     /**
      * 取一张的值
      */
@@ -286,14 +301,6 @@ public class NiuNiuGame {
         System.out.println("result is : " + getNiuResult(person.getCardList()));
     }
 
-
-
-    public static void main(String[] args) {
-
-        String gameUUid = createGame(3, Arrays.asList("qibin", "yan", "zhang"));
-        sendCard(gameUUid);
-        showResult(gameUUid);
-    }
 
     private static class NiuResult implements Comparable {
         /**
