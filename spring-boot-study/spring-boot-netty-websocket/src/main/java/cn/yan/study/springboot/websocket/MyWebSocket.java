@@ -1,11 +1,15 @@
 package cn.yan.study.springboot.websocket;
 
+import cn.yan.study.springboot.websocket.annotation.*;
+import cn.yan.study.springboot.websocket.pojo.ParameterMap;
+import cn.yan.study.springboot.websocket.pojo.Session;
+import cn.yan.study.springboot.websocket.utils.ConcurrentHashMapCacheUtils;
+import com.alibaba.fastjson.JSON;
+import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.springframework.stereotype.Component;
-import org.yeauty.annotation.*;
-import org.yeauty.pojo.ParameterMap;
-import org.yeauty.pojo.Session;
 
 import java.io.IOException;
 
@@ -16,7 +20,7 @@ import java.io.IOException;
  * @author: gentlemen_k
  * @emali: test@qq.com
  **/
-@ServerEndpoint
+@ServerEndpoint(prefix = "netty_web_socket")
 @Component
 public class MyWebSocket {
 
@@ -26,6 +30,16 @@ public class MyWebSocket {
 
         String paramValue = parameterMap.getParameter("paramKey");
         System.out.println(paramValue);
+        System.out.println("******************************");
+        System.out.println(JSON.toJSONString(session));
+
+        session.sendText("connect is success (send by session)");
+        session.setAttribute("token", "tokenA");
+        ConcurrentHashMapCacheUtils.setCache(session.getAttribute("token"), session.getChannel());
+
+        Channel channel = (Channel)ConcurrentHashMapCacheUtils.getCache(session.getAttribute("token"));
+
+        channel.writeAndFlush(new TextWebSocketFrame("connect is success (send by cache)"));
     }
 
     @OnClose
@@ -41,7 +55,7 @@ public class MyWebSocket {
     @OnMessage
     public void onMessage(Session session, String message) {
         System.out.println(message);
-        session.sendText("Hello Netty!");
+        System.out.println("your token is :" + session.getAttribute("token"));
     }
 
     @OnBinary

@@ -1,8 +1,8 @@
 package cn.yan.study.springboot.websocket.config;
 
+import cn.yan.study.springboot.websocket.standard.ServerEndpointExporter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.yeauty.standard.ServerEndpointExporter;
 
 /**
  * Created with IDEA
