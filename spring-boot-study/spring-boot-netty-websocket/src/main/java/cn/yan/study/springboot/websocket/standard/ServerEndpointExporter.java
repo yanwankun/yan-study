@@ -27,7 +27,7 @@ public class ServerEndpointExporter extends ApplicationObjectSupport implements 
     @Autowired
     Environment environment;
 
-    private final Map<InetSocketAddress, WebsocketServer> addressWebsocketServerMap = new HashMap<>();
+    private final Map<InetSocketAddress, WebSocketServer> addressWebsocketServerMap = new HashMap<>();
 
     @Override
     public void afterSingletonsInstantiated() {
@@ -53,8 +53,8 @@ public class ServerEndpointExporter extends ApplicationObjectSupport implements 
     }
 
     private void init() {
-        for (Map.Entry<InetSocketAddress, WebsocketServer> entry : addressWebsocketServerMap.entrySet()) {
-            WebsocketServer websocketServer = entry.getValue();
+        for (Map.Entry<InetSocketAddress, WebSocketServer> entry : addressWebsocketServerMap.entrySet()) {
+            WebSocketServer websocketServer = entry.getValue();
             try {
                 websocketServer.init();
             } catch (InterruptedException e) {
@@ -80,10 +80,10 @@ public class ServerEndpointExporter extends ApplicationObjectSupport implements 
         }
 
         InetSocketAddress inetSocketAddress = new InetSocketAddress(serverEndpointConfig.getHost(), serverEndpointConfig.getPort());
-        WebsocketServer websocketServer = addressWebsocketServerMap.get(inetSocketAddress);
+        WebSocketServer websocketServer = addressWebsocketServerMap.get(inetSocketAddress);
         if (websocketServer == null) {
             PojoEndpointServer pojoEndpointServer = new PojoEndpointServer(pojoMethodMapping, serverEndpointConfig);
-            websocketServer = new WebsocketServer(pojoEndpointServer, serverEndpointConfig);
+            websocketServer = new WebSocketServer(pojoEndpointServer, serverEndpointConfig);
             addressWebsocketServerMap.put(inetSocketAddress, websocketServer);
 
         } else {

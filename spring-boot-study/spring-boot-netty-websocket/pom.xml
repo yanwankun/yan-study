@@ -67,6 +67,7 @@
 
 
     <build>
+        <finalName>nettyWebSocket</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

@@ -56,6 +56,7 @@ public class MyWebSocket {
     public void onMessage(Session session, String message) {
         System.out.println(message);
         System.out.println("your token is :" + session.getAttribute("token"));
+        session.sendText("your message is :" + message);
     }
 
     @OnBinary
