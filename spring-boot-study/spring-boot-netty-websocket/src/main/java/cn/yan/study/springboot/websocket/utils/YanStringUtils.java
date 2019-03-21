@@ -1,5 +1,7 @@
 package cn.yan.study.springboot.websocket.utils;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.util.Random;
 
 /**
@@ -10,7 +12,9 @@ import java.util.Random;
  **/
 public class YanStringUtils {
 
+    private static String source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
     public static String getRandomStr(int length) {
-        return "aaa" + new Random().nextLong();
+        return RandomStringUtils.random(length, source);
     }
 }
