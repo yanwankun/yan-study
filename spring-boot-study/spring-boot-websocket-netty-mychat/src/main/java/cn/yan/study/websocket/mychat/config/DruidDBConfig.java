@@ -1,4 +1,4 @@
-//package cn.yan.study.websocket.mychat.config;
+//package cn.yan.study.netty.mychat.config;
 //
 //import java.sql.SQLException;
 //

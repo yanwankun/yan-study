@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication
 @MapperScan(basePackages =
 		{
-				"cn.yan.study.websocket.mychat.mapper"
+				"cn.yan.study.netty.mychat.mapper"
 		})
 public class ProjectApplication extends SpringBootServletInitializer {
 

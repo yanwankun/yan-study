@@ -1,4 +1,4 @@
-//package cn.yan.study.websocket.mychat.common.utils;
+//package cn.yan.study.netty.mychat.common.utils;
 //
 //import com.myself.nettychat.vo.ResultVo;
 //

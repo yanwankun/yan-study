@@ -55,7 +55,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
         // 如果HTTP解码失败，返回HHTP异常
         if (!req.decoderResult().isSuccess()
-                || (!"websocket".equals(req.headers().get("Upgrade")))) {
+                || (!"netty".equals(req.headers().get("Upgrade")))) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1,
                     BAD_REQUEST));
             return;
@@ -63,7 +63,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
         // 构造握手响应返回，本机测试
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-                "ws://localhost:8080/websocket", null, false);
+                "ws://localhost:8080/netty", null, false);
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
             WebSocketServerHandshakerFactory

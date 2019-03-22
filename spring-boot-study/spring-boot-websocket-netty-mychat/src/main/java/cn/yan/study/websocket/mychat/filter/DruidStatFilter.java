@@ -1,4 +1,4 @@
-//package cn.yan.study.websocket.mychat.filter;
+//package cn.yan.study.netty.mychat.filter;
 //
 //import javax.servlet.annotation.WebFilter;
 //import javax.servlet.annotation.WebInitParam;

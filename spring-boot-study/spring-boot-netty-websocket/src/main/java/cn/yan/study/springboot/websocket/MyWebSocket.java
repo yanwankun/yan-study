@@ -1,13 +1,11 @@
 package cn.yan.study.springboot.websocket;
 
-import cn.yan.study.springboot.websocket.annotation.*;
-import cn.yan.study.springboot.websocket.pojo.ParameterMap;
-import cn.yan.study.springboot.websocket.pojo.Session;
-import cn.yan.study.springboot.websocket.utils.ConcurrentHashMapCacheUtils;
-import com.alibaba.fastjson.JSON;
-import io.netty.channel.Channel;
+import cn.yan.study.springboot.netty.annotation.*;
+import cn.yan.study.springboot.netty.pojo.ParameterMap;
+import cn.yan.study.springboot.netty.pojo.Session;
+import cn.yan.study.springboot.utils.YanStringUtils;
+import cn.yan.study.springboot.websocket.store.WebSocketStoreUtils;
 import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.springframework.stereotype.Component;
 
@@ -24,32 +22,47 @@ import java.io.IOException;
 @Component
 public class MyWebSocket {
 
+    /**
+     * 当前在线总人数
+     */
+    private static int onlineCount = 0;
+
+    private static String token_key = "token";
+
+    /**
+     * 建立连接并保存用户channel, 返回用户token
+     * @param session
+     * @param headers
+     * @param parameterMap
+     * @throws IOException
+     */
     @OnOpen
     public void onOpen(Session session, HttpHeaders headers, ParameterMap parameterMap) throws IOException {
-        System.out.println("new connection");
-
-        String paramValue = parameterMap.getParameter("paramKey");
-        System.out.println(paramValue);
-        System.out.println("******************************");
-        System.out.println(JSON.toJSONString(session));
-
-        session.sendText("connect is success (send by session)");
-        session.setAttribute("token", "tokenA");
-        ConcurrentHashMapCacheUtils.setCache(session.getAttribute("token"), session.getChannel());
-
-        Channel channel = (Channel)ConcurrentHashMapCacheUtils.getCache(session.getAttribute("token"));
-
-        channel.writeAndFlush(new TextWebSocketFrame("connect is success (send by cache)"));
+        String token = YanStringUtils.getRandomStr(20);
+        while (WebSocketStoreUtils.tokenIsUse(token)) {
+            token = YanStringUtils.getRandomStr(20);
+        }
+        session.setAttribute(token_key, token);
+        WebSocketStoreUtils.addChannel(token, session.channel());
+        addOnlineCount();
+        session.sendText("connect is success, your token is :" + token);
     }
 
+    /**
+     * 关闭连接 删除所有保存的channel
+     * @param session
+     * @throws IOException
+     */
     @OnClose
     public void onClose(Session session) throws IOException {
-        System.out.println("one connection closed");
+        subOnlineCount();
+        WebSocketStoreUtils.reMoveChannel(session.getAttribute(token_key));
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        throwable.printStackTrace();
+        subOnlineCount();
+        WebSocketStoreUtils.reMoveChannel(session.getAttribute(token_key));
     }
 
     @OnMessage
@@ -85,6 +98,15 @@ public class MyWebSocket {
                     break;
             }
         }
+    }
+
+
+    public static synchronized void addOnlineCount() {
+        MyWebSocket.onlineCount++;
+    }
+
+    public static synchronized void subOnlineCount() {
+        MyWebSocket.onlineCount--;
     }
 
 }

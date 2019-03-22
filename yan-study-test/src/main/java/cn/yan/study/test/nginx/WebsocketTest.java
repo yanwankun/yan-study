@@ -47,7 +47,7 @@ public class WebsocketTest extends WebSocketClient{
 
     public static void main(String[] args) {
         try {
-            WebsocketTest client = new WebsocketTest("wss://www.alidaughter.cn:8443/websocket");
+            WebsocketTest client = new WebsocketTest("wss://www.alidaughter.cn:8443/netty");
             client.connect();
             while (!client.getReadyState().equals(ReadyState.OPEN)) {
 //                System.out.println(JSON.toJSONString(client));

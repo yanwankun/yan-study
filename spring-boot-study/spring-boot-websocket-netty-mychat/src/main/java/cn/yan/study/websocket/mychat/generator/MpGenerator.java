@@ -30,7 +30,7 @@ public class MpGenerator {
         GlobalConfig gc = new GlobalConfig();
         gc.setAuthor("Mht");
 //        gc.setOutputDir("D://workspace/spring-boot-mybatis/src/main/java");
-        gc.setOutputDir("D://code/personal/java/yan-study/spring-boot-study/spring-boot-websocket-netty-mychat/src/main/java");
+        gc.setOutputDir("D://code/personal/java/yan-study/spring-boot-study/spring-boot-netty-netty-mychat/src/main/java");
         gc.setFileOverride(true);// 是否覆盖同名文件，默认是false
         gc.setActiveRecord(true);// 不需要ActiveRecord特性的请改为false
         gc.setEnableCache(false);// XML 二级缓存
@@ -92,7 +92,7 @@ public class MpGenerator {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("cn.yan.study.websocket.mychat");
+        pc.setParent("cn.yan.study.netty.mychat");
 //        pc.setModuleName("test");
         mpg.setPackageInfo(pc);
 
