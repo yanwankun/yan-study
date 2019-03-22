@@ -19,6 +19,7 @@
         <module>study-netty</module>
         <module>yan-jisuanke</module>
         <module>yan-study-test</module>
+        <module>yan-http</module>
     </modules>
 
 
