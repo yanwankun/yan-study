@@ -132,11 +132,11 @@ public class ServerEndpointExporter extends ApplicationObjectSupport implements 
             if (pathFromEnv != null) {
                 path = pathFromEnv;
             }
-            Integer bossLoopGroupThreadsFromEnv = environment.getProperty(prefix + ".boss-loop-group-threads", Integer.class);
+            Integer bossLoopGroupThreadsFromEnv = environment.getProperty(prefix + ".boss-loop-Group-threads", Integer.class);
             if (bossLoopGroupThreadsFromEnv != null) {
                 bossLoopGroupThreads = bossLoopGroupThreadsFromEnv;
             }
-            Integer workerLoopGroupThreadsFromEnv = environment.getProperty(prefix + ".worker-loop-group-threads", Integer.class);
+            Integer workerLoopGroupThreadsFromEnv = environment.getProperty(prefix + ".worker-loop-Group-threads", Integer.class);
             if (workerLoopGroupThreadsFromEnv != null) {
                 workerLoopGroupThreads = workerLoopGroupThreadsFromEnv;
             }

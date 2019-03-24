@@ -1,4 +1,4 @@
-package cn.yan.study.springboot.websocket.store;
+package cn.yan.study.springboot.store;
 
 import cn.yan.study.springboot.netty.bean.TokenInfo;
 import io.netty.channel.Channel;

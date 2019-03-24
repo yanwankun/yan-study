@@ -1,4 +1,4 @@
-package cn.yan.study.springboot.websocket.result;
+package cn.yan.study.springboot.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,13 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author : HEE
- * @date : 2019/1/10
- */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+ * Created with IDEA
+ *
+ * @author: gentlemen_k
+ * @emali: test@qq.com
+ **/
+
 public class BaseResult<T> {
 
     private T body;
@@ -20,6 +19,9 @@ public class BaseResult<T> {
     private Integer code;
 
     private String message;
+
+    public BaseResult() {
+    }
 
     public BaseResult(T data) {
         body = data;
@@ -33,15 +35,17 @@ public class BaseResult<T> {
         this.message = message;
     }
 
-    public void makeSuccessResult() {
+    public BaseResult makeSuccessResult() {
         code = 0;
         message = "success";
+        return this;
     }
 
-    public void makeSuccessResult(T data) {
+    public BaseResult makeSuccessResult(T data) {
         body = data;
         code = 0;
         message = "success";
+        return this;
     }
 
     public void makeFailedResult() {
@@ -49,9 +53,10 @@ public class BaseResult<T> {
         message = "failed";
     }
 
-    public void makeFailedResult(String message) {
+    public BaseResult makeFailedResult(String message) {
         code = -1;
         this.message = message;
+        return this;
     }
 
     public BaseResult makeFailedResult(Integer code, String message) {
