@@ -18,5 +18,4 @@ public interface WebSocketService {
      */
     BaseResult login(LoginParam param);
 
-
 }
