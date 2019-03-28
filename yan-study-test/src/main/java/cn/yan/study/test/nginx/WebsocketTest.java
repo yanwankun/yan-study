@@ -47,14 +47,17 @@ public class WebsocketTest extends WebSocketClient{
 
     public static void main(String[] args) {
         try {
-            WebsocketTest client = new WebsocketTest("wss://www.alidaughter.cn:8443/netty");
+            WebsocketTest client = new WebsocketTest("wss://api-v1.eosflare.io/socket.io/?EIO=3&transport=websocket");
             client.connect();
             while (!client.getReadyState().equals(ReadyState.OPEN)) {
 //                System.out.println(JSON.toJSONString(client));
-                System.out.println("还没有打开");
+//                System.out.println("还没有打开");
             }
             System.out.println("建立websocket连接");
-            client.send("asd");
+            client.send("2");
+
+            String test = "";
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
