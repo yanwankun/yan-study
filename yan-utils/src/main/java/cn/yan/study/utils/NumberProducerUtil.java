@@ -1,13 +1,9 @@
 package cn.yan.study.utils;
 
-import org.apache.commons.collections.set.SynchronizedSet;
-
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * Created
+ * Created 这个是一个类似于统一发号器
  * User  wankunYan
  * Date  2018/9/26
  * Time  11:36
