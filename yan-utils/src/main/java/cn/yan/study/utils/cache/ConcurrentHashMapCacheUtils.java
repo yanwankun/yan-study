@@ -23,11 +23,11 @@ public class ConcurrentHashMapCacheUtils {
     /**
      * 当前缓存个数
      */
-    private static Integer CURRENT_SIZE = 0;
+    private static Integer CURRENT_SIZE;
     /**
      * 时间一分钟
      */
-    static Long ONE_MINUTE = 1 * 60 * 1000L;
+    static final Long ONE_MINUTE = 60 * 1000L;
     /**
      * 缓存对象
      */
@@ -39,12 +39,7 @@ public class ConcurrentHashMapCacheUtils {
     /**
      * 清理过期缓存是否在运行
      */
-    private static Boolean CLEAN_THREAD_IS_RUN = false;
-
-//    /**
-//     * 清理线程的
-//     */
-//    private static ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static volatile Boolean CLEAN_THREAD_IS_RUN = false;
 
 
     /**
@@ -136,8 +131,15 @@ public class ConcurrentHashMapCacheUtils {
      */
     private static void deleteLRU() {
         LOGGER.info("delete Least recently used run!");
-        String cacheKey = CACHE_USE_LOG_LIST.remove(CACHE_USE_LOG_LIST.size() - 1);
-        deleteCache(cacheKey);
+        String cacheKey = null;
+        synchronized (CACHE_USE_LOG_LIST) {
+            if (CACHE_USE_LOG_LIST.size() >= CACHE_MAX_NUMBER - 10) {
+                cacheKey = CACHE_USE_LOG_LIST.remove(CACHE_USE_LOG_LIST.size() - 1);
+            }
+        }
+        if (cacheKey != null) {
+            deleteCache(cacheKey);
+        }
     }
 
     /**
@@ -178,8 +180,10 @@ public class ConcurrentHashMapCacheUtils {
      * 保存缓存的使用记录
      */
     private static synchronized void saveCacheUseLog(String cacheKey) {
-        CACHE_USE_LOG_LIST.remove(cacheKey);
-        CACHE_USE_LOG_LIST.add(0,cacheKey);
+        synchronized (CACHE_USE_LOG_LIST) {
+            CACHE_USE_LOG_LIST.remove(cacheKey);
+            CACHE_USE_LOG_LIST.add(0,cacheKey);
+        }
     }
 
     /**
@@ -199,45 +203,8 @@ public class ConcurrentHashMapCacheUtils {
             //设置为后台守护线程
             thread.setDaemon(true);
             thread.start();
-//            executor.submit(new CleanTimeOutThread());
         }
     }
-
-    public static void showUtilsInfo() {
-        System.out.println("clean time out cache is run :" + CLEAN_THREAD_IS_RUN);
-        System.out.println("cache max count is :" + CACHE_MAX_NUMBER);
-        System.out.println("cache current count is :" + CURRENT_SIZE);
-        System.out.println("cache object map is :" + CACHE_OBJECT_MAP.toString());
-        System.out.println("cache use log list is :" + CACHE_USE_LOG_LIST.toString());
-
-    }
-
-    public static void main(String[] args) {
-
-        for (int i = 0; i < 100; i++) {
-            try {
-                Thread.sleep(2 * 1000L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            ConcurrentHashMapCacheUtils.setCache("my_cache_key_" + i, i, 60*1000);
-        }
-
-        for (int i = 0; i < 100; i++) {
-            if (i > 10) {
-                ConcurrentHashMapCacheUtils.getCache("test");
-            }
-            try {
-                Thread.sleep(2 * 1000L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            ConcurrentHashMapCacheUtils.showUtilsInfo();
-        }
-
-    }
-
-
 
 }
 
