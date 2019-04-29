@@ -3,8 +3,10 @@ package cn.yan.study.utils.cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created
@@ -19,11 +21,11 @@ public class ConcurrentHashMapCacheUtils {
     /**
      * 缓存最大个数
      */
-    private static final Integer CACHE_MAX_NUMBER = 100;
+    private static final Integer CACHE_MAX_NUMBER = 1000;
     /**
      * 当前缓存个数
      */
-    private static Integer CURRENT_SIZE;
+    private static Integer CURRENT_SIZE = 0;
     /**
      * 时间一分钟
      */
