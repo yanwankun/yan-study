@@ -1,0 +1,6 @@
+server:
+#    port: 10086
+  tomcat:
+    uri-encoding: UTF-8
+  servlet:
+    context-path: /
